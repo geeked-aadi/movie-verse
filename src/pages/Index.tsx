@@ -1,15 +1,14 @@
-import { Star, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import PiracyFooter from "@/components/PiracyFooter";
 
 const teamMembers = ["Aditya Aradhya", "Amrutesh", "Eshwari", "Brahmi"];
 
 export default function Index() {
   return (
-    <div className="min-h-screen pt-16">
-      {/* Hero Section */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
+    <div className="min-h-screen pt-16 flex flex-col">
+      <section className="mx-auto max-w-7xl px-4 py-20 flex-1">
         <div className="flex flex-col md:flex-row items-start justify-between gap-12">
-          {/* Left: Title */}
           <div className="flex-1 space-y-6">
             <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-primary leading-tight">
               Movie Recommendation System
@@ -24,8 +23,6 @@ export default function Index() {
               Explore Movies →
             </Link>
           </div>
-
-          {/* Right: Team Members */}
           <div className="w-full md:w-80 rounded-xl border border-border bg-card p-6 space-y-4">
             <div className="flex items-center gap-2 text-primary font-bold text-lg">
               <Users className="h-5 w-5" />
@@ -44,19 +41,7 @@ export default function Index() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-card">
-        <div className="mx-auto max-w-7xl px-4 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 fill-primary text-primary" />
-              <span className="font-bold text-primary font-serif italic text-sm">MovieVerse</span>
-            </div>
-            <p>© 2026 MovieVerse. All rights reserved. Piracy is a crime.</p>
-          </div>
-        </div>
-      </footer>
+      <PiracyFooter />
     </div>
   );
 }

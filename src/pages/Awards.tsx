@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import DetailPanel from "@/components/DetailPanel";
+import PiracyFooter from "@/components/PiracyFooter";
 import { awards, type Award } from "@/data/mockData";
 
 const allBodies = [...new Set(awards.map((a) => a.body))].sort();
@@ -26,25 +27,20 @@ export default function Awards() {
   }, [body, year, wonOnly]);
 
   return (
-    <div className="min-h-screen pt-16">
-      <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className="min-h-screen pt-16 flex flex-col">
+      <div className="mx-auto max-w-7xl px-4 py-8 flex-1">
         <h1 className="text-3xl font-bold mb-6">Awards</h1>
 
-        {/* Filters */}
         <div className="flex flex-wrap items-center gap-3 mb-8 rounded-lg border border-border bg-card p-4">
           <Select value={body} onValueChange={setBody}>
-            <SelectTrigger className="w-48 bg-panel border-border text-foreground">
-              <SelectValue placeholder="Award Body" />
-            </SelectTrigger>
+            <SelectTrigger className="w-48 bg-panel border-border text-foreground"><SelectValue placeholder="Award Body" /></SelectTrigger>
             <SelectContent className="bg-card border-border">
               <SelectItem value="all">All Award Bodies</SelectItem>
               {allBodies.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={year} onValueChange={setYear}>
-            <SelectTrigger className="w-32 bg-panel border-border text-foreground">
-              <SelectValue placeholder="Year" />
-            </SelectTrigger>
+            <SelectTrigger className="w-32 bg-panel border-border text-foreground"><SelectValue placeholder="Year" /></SelectTrigger>
             <SelectContent className="bg-card border-border">
               <SelectItem value="all">All Years</SelectItem>
               {allYears.map((y) => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
@@ -56,7 +52,6 @@ export default function Awards() {
           </div>
         </div>
 
-        {/* Grid */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((award) => (
             <div
@@ -66,9 +61,7 @@ export default function Awards() {
             >
               <Trophy className={`h-10 w-10 shrink-0 mt-1 ${award.won ? "text-primary" : "text-warning"}`} />
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                  {award.name}
-                </h3>
+                <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{award.name}</h3>
                 <p className="text-xs text-muted-foreground">{award.category}</p>
                 <p className="text-xs text-muted-foreground">{award.year}</p>
                 <div className="mt-2 flex items-center gap-2">
@@ -86,6 +79,7 @@ export default function Awards() {
           <p className="text-center text-muted-foreground py-12">No awards found matching your filters.</p>
         )}
       </div>
+      <PiracyFooter />
       {selected && <DetailPanel type="award" data={selected} onClose={() => setSelected(null)} />}
     </div>
   );
