@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import MovieCard from "@/components/MovieCard";
 import DetailPanel from "@/components/DetailPanel";
-import { movies, type Movie } from "@/data/mockData";
+import { movies, recommendedMovies, type Movie } from "@/data/mockData";
 
 const allGenres = [...new Set(movies.flatMap((m) => m.genre))].sort();
 const allLanguages = [...new Set(movies.map((m) => m.language))].sort();
@@ -86,6 +86,16 @@ export default function Movies() {
         {filtered.length === 0 && (
           <p className="text-center text-muted-foreground py-12">No movies found matching your filters.</p>
         )}
+
+        {/* You May Also Like */}
+        <section className="mt-16">
+          <h2 className="text-2xl font-bold mb-6 text-primary">You May Also Like</h2>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            {recommendedMovies.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} onClick={setSelected} />
+            ))}
+          </div>
+        </section>
       </div>
       {selected && <DetailPanel type="movie" data={selected} onClose={() => setSelected(null)} />}
     </div>
