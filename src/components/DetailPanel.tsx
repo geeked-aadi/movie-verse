@@ -1,4 +1,4 @@
-import { X, Star, Clock, Globe, Film, Trophy, Ticket } from "lucide-react";
+import { X, Star, Clock, Globe, Film, Trophy, Ticket, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Movie, Actor, Award } from "@/data/mockData";
@@ -34,6 +34,19 @@ export default function DetailPanel({ type, data, onClose }: DetailPanelProps) {
         </div>
       </div>
     </>
+  );
+}
+
+function SQLQuerySection() {
+  return (
+    <div className="rounded-lg border border-border bg-panel p-4 space-y-3">
+      <h3 className="text-sm font-semibold text-primary flex items-center gap-2">
+        <Database className="h-4 w-4" /> SQL Query Execution
+      </h3>
+      <div className="min-h-[120px] rounded-md border border-dashed border-border bg-background/50 p-3 flex items-center justify-center">
+        <p className="text-xs text-muted-foreground text-center">SQL query results will be displayed here</p>
+      </div>
+    </div>
   );
 }
 
@@ -87,6 +100,7 @@ function MovieDetail({ movie }: { movie: Movie }) {
       <Button className="w-full gold-gradient text-primary-foreground font-semibold hover:opacity-90">
         <Ticket className="mr-2 h-4 w-4" /> Book Tickets
       </Button>
+      <SQLQuerySection />
     </>
   );
 }
@@ -140,6 +154,7 @@ function ActorDetail({ actor }: { actor: Actor }) {
           ))}
         </div>
       )}
+      <SQLQuerySection />
     </>
   );
 }
@@ -170,6 +185,7 @@ function AwardDetail({ award }: { award: Award }) {
           <p key={n} className="text-sm text-muted-foreground">• {n}</p>
         ))}
       </div>
+      <SQLQuerySection />
     </>
   );
 }

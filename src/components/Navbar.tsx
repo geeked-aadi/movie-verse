@@ -30,7 +30,7 @@ export default function Navbar({ onSearch }: NavbarProps) {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <Star className="h-6 w-6 fill-primary text-primary" />
-          <span className="text-xl font-bold text-primary">CineVault</span>
+          <span className="text-xl font-bold text-primary font-serif italic">MovieVerse</span>
         </Link>
 
         {/* Nav Links */}
