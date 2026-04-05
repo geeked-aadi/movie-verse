@@ -53,7 +53,7 @@ function SQLQuerySection() {
 function MovieDetail({ movie }: { movie: Movie }) {
   return (
     <>
-      <img src={movie.poster} alt={movie.title} className="w-full h-64 object-cover rounded-lg" />
+      <img src={movie.poster} alt={movie.title} className="w-full rounded-lg object-contain" />
       <div className="space-y-1">
         <p className="text-sm text-muted-foreground">Directed by {movie.director}</p>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
