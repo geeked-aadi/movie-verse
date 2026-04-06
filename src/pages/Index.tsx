@@ -13,8 +13,8 @@ export default function Index() {
             <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-primary leading-tight">
               Movie Recommendation System
             </h1>
-            <p className="text-lg text-muted-foreground max-w-lg">
-              Discover, explore, and manage your favorite movies, actors, and awards — all in one place.
+            <p className="text-base text-muted-foreground max-w-lg leading-relaxed">
+              Discover, explore, and book your favorite movies. Browse through our curated collection of films across genres, languages, and eras. Your ultimate movie companion.
             </p>
             <Link
               to="/movies"

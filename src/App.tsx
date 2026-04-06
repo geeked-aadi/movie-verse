@@ -10,6 +10,7 @@ import Actors from "./pages/Actors.tsx";
 import Awards from "./pages/Awards.tsx";
 import Update from "./pages/Update.tsx";
 import Login from "./pages/Login.tsx";
+import Booking from "./pages/Booking.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/awards" element={<Awards />} />
           <Route path="/update" element={<Update />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/booking" element={<Booking />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

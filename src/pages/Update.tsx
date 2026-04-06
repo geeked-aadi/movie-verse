@@ -8,9 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { toast } from "sonner";
+import PiracyFooter from "@/components/PiracyFooter";
 
 const genres = ["Action","Adventure","Comedy","Crime","Drama","Fantasy","History","Horror","Mystery","Romance","Sci-Fi","Thriller","War"];
-const languages = ["English","French","Japanese","Arabic","Spanish","Korean","Hindi","German"];
+const languages = ["English","French","Japanese","Arabic","Spanish","Korean","Hindi","German","Kannada","Cantonese"];
 
 export default function Update() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -28,8 +29,8 @@ export default function Update() {
   };
 
   return (
-    <div className="min-h-screen pt-16">
-      <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="min-h-screen pt-16 flex flex-col">
+      <div className="mx-auto max-w-3xl px-4 py-8 flex-1">
         <h1 className="text-3xl font-bold mb-6">Update Database</h1>
         <Tabs defaultValue="movie">
           <TabsList className="bg-panel border border-border mb-6">
@@ -72,8 +73,8 @@ export default function Update() {
               </div>
               <div><Label className="text-foreground">Synopsis</Label><Textarea className="bg-panel border-border text-foreground min-h-[100px]" /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div><Label className="text-foreground">Budget</Label><Input placeholder="$100M" className="bg-panel border-border text-foreground" /></div>
-                <div><Label className="text-foreground">Box Office</Label><Input placeholder="$500M" className="bg-panel border-border text-foreground" /></div>
+                <div><Label className="text-foreground">Budget (₹ Cr)</Label><Input placeholder="₹100 Cr" className="bg-panel border-border text-foreground" /></div>
+                <div><Label className="text-foreground">Box Office (₹ Cr)</Label><Input placeholder="₹500 Cr" className="bg-panel border-border text-foreground" /></div>
               </div>
               <div><Label className="text-foreground">Poster URL</Label><Input placeholder="https://..." className="bg-panel border-border text-foreground" /></div>
               <div className="flex gap-3 pt-2">
@@ -113,6 +114,7 @@ export default function Update() {
           </TabsContent>
         </Tabs>
       </div>
+      <PiracyFooter />
     </div>
   );
 }
