@@ -8,7 +8,6 @@ import kungfuHustlePoster from "@/assets/kungfu_hustle.webp";
 import johnWickPoster from "@/assets/john_wick.webp";
 import madMaxPoster from "@/assets/mad_max.webp";
 import piratesPoster from "@/assets/pirates.webp";
-import inceptionPoster from "@/assets/inception.webp";
 import parasitePoster from "@/assets/parasite.webp";
 import interstellarPoster from "@/assets/interstellar.jpg";
 import karateKidPoster from "@/assets/karate_kid.webp";
@@ -18,6 +17,16 @@ import bhootPoster from "@/assets/bhoot_and_friends.jpg";
 import zodiacPoster from "@/assets/zodiac.jpg";
 import sevenPoster from "@/assets/seven.jpg";
 import whiplashPoster from "@/assets/whiplash.webp";
+import dhamaalPoster from "@/assets/dhamaal.jpg";
+import golmaalPoster from "@/assets/golmaal.jpg";
+import andhadhunPoster from "@/assets/andhadhun.jpg";
+import rustomPoster from "@/assets/rustom.jpg";
+import baramulla2Poster from "@/assets/baramulla2.jpg";
+import strangerThingsPoster from "@/assets/stranger_things.jpg";
+import manojBajpayeePhoto from "@/assets/manoj_bajpayee.jpg";
+import vidyaBalanPhoto from "@/assets/vidya_balan.webp";
+import emmaWatsonPhoto from "@/assets/emma_watson.webp";
+import leonardoDiCaprioPhoto from "@/assets/leonardo_dicaprio.webp";
 
 export interface Movie {
   id: number;
@@ -67,7 +76,7 @@ export interface Award {
 export const movies: Movie[] = [
   {
     id: 1, title: "Dhurandhar: The Revenge", year: 2026, genre: ["Action", "Thriller"], rating: 8.5,
-    director: "Aditya Dhar", duration: "2h 30min", language: "Hindi",
+    director: "Aditya Dhar", duration: "3h 55min", language: "Hindi",
     synopsis: "An intense revenge saga where a warrior rises from the ashes to reclaim his honor and fight against injustice in a brutal world.",
     poster: dhurandharPoster, heroImage: dhurandharPoster,
     budget: "₹415 Cr", boxOffice: "₹2,075 Cr",
@@ -148,9 +157,9 @@ export const movies: Movie[] = [
   },
   {
     id: 10, title: "Baramulla", year: 2024, genre: ["Thriller", "Drama"], rating: 7.5,
-    director: "Various", duration: "Series", language: "Hindi",
+    director: "Aditya Suhas Jambhale", duration: "Series", language: "Hindi",
     synopsis: "A gripping thriller set in the conflict zone of Baramulla, exploring the lives caught between duty and survival.",
-    poster: baramullaPoster, heroImage: baramullaPoster,
+    poster: baramulla2Poster, heroImage: baramulla2Poster,
     budget: "₹66 Cr", boxOffice: "N/A",
     cast: [{ name: "Unknown", role: "Lead" }],
     awards: [],
@@ -195,8 +204,7 @@ export const movies: Movie[] = [
     id: 15, title: "Stranger Things", year: 2016, genre: ["Drama", "Fantasy", "Horror"], rating: 8.7,
     director: "The Duffer Brothers", duration: "Series", language: "English",
     synopsis: "When a young boy disappears, his mother, a police chief and his friends must confront terrifying supernatural forces.",
-    poster: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=400&h=600&fit=crop",
-    heroImage: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=1920&h=800&fit=crop",
+    poster: strangerThingsPoster, heroImage: strangerThingsPoster,
     budget: "₹249 Cr/season", boxOffice: "N/A",
     cast: [{ name: "Millie Bobby Brown", role: "Eleven" }, { name: "Finn Wolfhard", role: "Mike Wheeler" }],
     awards: ["SAG Award - Outstanding Ensemble", "Emmy - Outstanding Drama (Nominated)"],
@@ -211,13 +219,13 @@ export const movies: Movie[] = [
     awards: ["Best Supporting Actor - Academy Awards", "Best Film Editing - Academy Awards", "Best Sound Mixing - Academy Awards"],
   },
   {
-    id: 17, title: "Seven", year: 1995, genre: ["Crime", "Drama", "Mystery"], rating: 8.6,
-    director: "David Fincher", duration: "2h 7min", language: "English",
-    synopsis: "Two detectives hunt a serial killer who uses the seven deadly sins as his motives.",
-    poster: sevenPoster, heroImage: sevenPoster,
-    budget: "₹274 Cr", boxOffice: "₹2,714 Cr",
-    cast: [{ name: "Brad Pitt", role: "Detective David Mills" }, { name: "Morgan Freeman", role: "Detective William Somerset" }],
-    awards: ["Best Film Editing - Academy Awards (Nominated)"],
+    id: 17, title: "Dhamaal", year: 2007, genre: ["Comedy", "Adventure"], rating: 7.0,
+    director: "Indra Kumar", duration: "2h 36min", language: "Hindi",
+    synopsis: "Four crazy friends overhear a dying criminal reveal the location of hidden treasure and embark on a hilarious race to find it first.",
+    poster: dhamaalPoster, heroImage: dhamaalPoster,
+    budget: "₹22 Cr", boxOffice: "₹54 Cr",
+    cast: [{ name: "Sanjay Dutt", role: "Inspector Kabir" }, { name: "Arshad Warsi", role: "Adi" }, { name: "Riteish Deshmukh", role: "Roy" }, { name: "Javed Jaffrey", role: "Manav" }],
+    awards: [],
   },
   {
     id: 18, title: "Zodiac", year: 2007, genre: ["Crime", "Drama", "Mystery"], rating: 7.7,
@@ -232,23 +240,22 @@ export const movies: Movie[] = [
 
 export const recommendedMovies: Movie[] = [
   {
-    id: 101, title: "Inception", year: 2010, genre: ["Sci-Fi", "Action"], rating: 8.8,
-    director: "Christopher Nolan", duration: "2h 28min", language: "English",
-    synopsis: "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.",
-    poster: inceptionPoster, heroImage: inceptionPoster,
-    budget: "₹1,328 Cr", boxOffice: "₹6,939 Cr",
-    cast: [{ name: "Leonardo DiCaprio", role: "Dom Cobb" }],
-    awards: ["Best Cinematography - Academy Awards"],
+    id: 101, title: "Seven", year: 1995, genre: ["Crime", "Drama", "Mystery"], rating: 8.6,
+    director: "David Fincher", duration: "2h 7min", language: "English",
+    synopsis: "Two detectives hunt a serial killer who uses the seven deadly sins as his motives.",
+    poster: sevenPoster, heroImage: sevenPoster,
+    budget: "₹274 Cr", boxOffice: "₹2,714 Cr",
+    cast: [{ name: "Brad Pitt", role: "Detective David Mills" }, { name: "Morgan Freeman", role: "Detective William Somerset" }],
+    awards: ["Best Film Editing - Academy Awards (Nominated)"],
   },
   {
-    id: 102, title: "The Shawshank Redemption", year: 1994, genre: ["Drama"], rating: 9.3,
-    director: "Frank Darabont", duration: "2h 22min", language: "English",
-    synopsis: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-    poster: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&h=600&fit=crop",
-    heroImage: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1920&h=800&fit=crop",
-    budget: "₹208 Cr", boxOffice: "₹481 Cr",
-    cast: [{ name: "Tim Robbins", role: "Andy Dufresne" }, { name: "Morgan Freeman", role: "Red" }],
-    awards: ["Best Picture - Academy Awards (Nominated)"],
+    id: 102, title: "Andhadhun", year: 2018, genre: ["Crime", "Thriller", "Comedy"], rating: 8.3,
+    director: "Sriram Raghavan", duration: "2h 19min", language: "Hindi",
+    synopsis: "A series of mysterious events change the life of a blind pianist, who must now report a crime that he should technically know nothing of.",
+    poster: andhadhunPoster, heroImage: andhadhunPoster,
+    budget: "₹32 Cr", boxOffice: "₹456 Cr",
+    cast: [{ name: "Ayushmann Khurrana", role: "Akash" }, { name: "Tabu", role: "Simi" }, { name: "Radhika Apte", role: "Sophie" }],
+    awards: ["Best Hindi Film - National Film Awards", "Filmfare Award - Best Film"],
   },
   {
     id: 103, title: "Interstellar", year: 2014, genre: ["Sci-Fi", "Drama"], rating: 8.6,
@@ -260,14 +267,13 @@ export const recommendedMovies: Movie[] = [
     awards: ["Best Visual Effects - Academy Awards"],
   },
   {
-    id: 104, title: "The Dark Knight", year: 2008, genre: ["Action", "Crime", "Drama"], rating: 9.0,
-    director: "Christopher Nolan", duration: "2h 32min", language: "English",
-    synopsis: "The menace known as The Joker wreaks havoc on Gotham City, forcing Batman to confront chaos itself.",
-    poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop",
-    heroImage: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920&h=800&fit=crop",
-    budget: "₹1,536 Cr", boxOffice: "₹8,300 Cr",
-    cast: [{ name: "Christian Bale", role: "Batman" }, { name: "Heath Ledger", role: "Joker" }],
-    awards: ["Best Supporting Actor - Academy Awards"],
+    id: 104, title: "Rustom", year: 2016, genre: ["Crime", "Drama", "Thriller"], rating: 6.5,
+    director: "Tinu Suresh Desai", duration: "2h 28min", language: "Hindi",
+    synopsis: "A naval officer is accused of murdering his wife's lover. Inspired by true events, the trial becomes the most talked-about case in the country.",
+    poster: rustomPoster, heroImage: rustomPoster,
+    budget: "₹45 Cr", boxOffice: "₹218 Cr",
+    cast: [{ name: "Akshay Kumar", role: "Rustom Pavri" }, { name: "Ileana D'Cruz", role: "Cynthia Pavri" }],
+    awards: ["National Film Award - Best Film on Social Issues"],
   },
   {
     id: 105, title: "Parasite", year: 2019, genre: ["Drama", "Thriller"], rating: 8.5,
@@ -279,13 +285,12 @@ export const recommendedMovies: Movie[] = [
     awards: ["Best Picture - Academy Awards", "Best Director - Academy Awards"],
   },
   {
-    id: 106, title: "Fight Club", year: 1999, genre: ["Drama", "Thriller"], rating: 8.8,
-    director: "David Fincher", duration: "2h 19min", language: "English",
-    synopsis: "An insomniac office worker and a soap salesman form an underground fight club that evolves into something much more.",
-    poster: "https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=400&h=600&fit=crop",
-    heroImage: "https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=1920&h=800&fit=crop",
-    budget: "₹523 Cr", boxOffice: "₹838 Cr",
-    cast: [{ name: "Brad Pitt", role: "Tyler Durden" }, { name: "Edward Norton", role: "The Narrator" }],
+    id: 106, title: "Golmaal: Fun Unlimited", year: 2006, genre: ["Comedy", "Drama"], rating: 7.1,
+    director: "Rohit Shetty", duration: "2h 27min", language: "Hindi",
+    synopsis: "Two groups of mischievous boys try to outsmart each other while living in a blind couple's house, leading to hilarious chaos.",
+    poster: golmaalPoster, heroImage: golmaalPoster,
+    budget: "₹13 Cr", boxOffice: "₹52 Cr",
+    cast: [{ name: "Ajay Devgan", role: "Gopal" }, { name: "Arshad Warsi", role: "Laxman 1" }, { name: "Tusshar Kapoor", role: "Lucky" }, { name: "Sharman Joshi", role: "Laxman 2" }],
     awards: [],
   },
 ];
@@ -357,20 +362,64 @@ export const actors: Actor[] = [
     awards: ["Japan Academy Prize 2024", "Best Actress - Tokyo IFF 2023"],
   },
   {
-    id: 6, name: "Luca Moretti", nationality: "Italian", dob: "1987-09-03", age: 37, gender: "Male",
-    biography: "Luca Moretti is an Italian heartthrob with serious acting chops. Known for his charismatic screen presence and ability to switch between comedy and drama effortlessly.",
-    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
-    awardsCount: 2,
-    knownFor: ["Echoes of Silence", "Midnight in Marrakech", "Beneath the Waves"],
+    id: 6, name: "Manoj Bajpayee", nationality: "Indian", dob: "1969-04-23", age: 55, gender: "Male",
+    biography: "Manoj Bajpayee is one of the finest Indian actors, known for his extraordinary performances in Gangs of Wasseypur, The Family Man, and Satya. A National Award winner, he is celebrated for his method acting and versatility.",
+    photo: manojBajpayeePhoto,
+    awardsCount: 12,
+    knownFor: ["The Family Man", "Gangs of Wasseypur", "Satya", "Aligarh"],
     filmography: [
-      { title: "Echoes of Silence", year: 2024, role: "Vincent" },
-      { title: "Midnight in Marrakech", year: 2024, role: "Marco" },
-      { title: "Beneath the Waves", year: 2024, role: "Captain Nero" },
+      { title: "The Family Man", year: 2019, role: "Srikant Tiwari" },
+      { title: "Gangs of Wasseypur", year: 2012, role: "Sardar Khan" },
+      { title: "Satya", year: 1998, role: "Bhiku Mhatre" },
+      { title: "Aligarh", year: 2015, role: "Prof. Siras" },
     ],
-    awards: ["David di Donatello 2023"],
+    awards: ["National Film Award - Best Actor", "Padma Shri", "Filmfare Award - Best Actor (Critics)"],
   },
   {
-    id: 7, name: "Ravi Sharma", nationality: "Indian", dob: "1983-12-20", age: 41, gender: "Male",
+    id: 7, name: "Vidya Balan", nationality: "Indian", dob: "1978-01-01", age: 46, gender: "Female",
+    biography: "Vidya Balan is a powerhouse Indian actress known for her strong female-centric roles. She has been a trailblazer in Bollywood with films like The Dirty Picture, Kahaani, and Tumhari Sulu.",
+    photo: vidyaBalanPhoto,
+    awardsCount: 9,
+    knownFor: ["Kahaani", "The Dirty Picture", "Tumhari Sulu", "Shakuntala Devi"],
+    filmography: [
+      { title: "Kahaani", year: 2012, role: "Vidya Bagchi" },
+      { title: "The Dirty Picture", year: 2011, role: "Silk Smitha" },
+      { title: "Tumhari Sulu", year: 2017, role: "Sulochana" },
+      { title: "Shakuntala Devi", year: 2020, role: "Shakuntala Devi" },
+    ],
+    awards: ["National Film Award - Best Actress", "Padma Shri", "Filmfare Award - Best Actress"],
+  },
+  {
+    id: 8, name: "Emma Stone", nationality: "American", dob: "1988-11-06", age: 36, gender: "Female",
+    biography: "Emma Stone is an American actress and two-time Academy Award winner known for her roles in La La Land, Poor Things, and The Amazing Spider-Man. She is one of the highest-paid actresses in the world.",
+    photo: emmaWatsonPhoto,
+    awardsCount: 10,
+    knownFor: ["La La Land", "Poor Things", "The Amazing Spider-Man", "Easy A"],
+    filmography: [
+      { title: "Poor Things", year: 2023, role: "Bella Baxter" },
+      { title: "La La Land", year: 2016, role: "Mia Dolan" },
+      { title: "The Amazing Spider-Man", year: 2012, role: "Gwen Stacy" },
+      { title: "Easy A", year: 2010, role: "Olive Penderghast" },
+    ],
+    awards: ["Best Actress - Academy Awards (La La Land)", "Best Actress - Academy Awards (Poor Things)", "BAFTA - Best Actress"],
+  },
+  {
+    id: 9, name: "Leonardo DiCaprio", nationality: "American", dob: "1974-11-11", age: 50, gender: "Male",
+    biography: "Leonardo DiCaprio is one of the most acclaimed actors of his generation. From Titanic to The Revenant, he has delivered iconic performances and is also a dedicated environmental activist.",
+    photo: leonardoDiCaprioPhoto,
+    awardsCount: 15,
+    knownFor: ["Inception", "Titanic", "The Revenant", "The Wolf of Wall Street"],
+    filmography: [
+      { title: "Killers of the Flower Moon", year: 2023, role: "Ernest Burkhart" },
+      { title: "Don't Look Up", year: 2021, role: "Dr. Randall Mindy" },
+      { title: "The Revenant", year: 2015, role: "Hugh Glass" },
+      { title: "Inception", year: 2010, role: "Dom Cobb" },
+      { title: "Titanic", year: 1997, role: "Jack Dawson" },
+    ],
+    awards: ["Best Actor - Academy Awards (The Revenant)", "Golden Globe - Best Actor", "SAG Award - Best Actor"],
+  },
+  {
+    id: 10, name: "Ravi Sharma", nationality: "Indian", dob: "1983-12-20", age: 41, gender: "Male",
     biography: "Ravi Sharma is one of India's most acclaimed actors, known for his method acting approach and his ability to disappear into roles completely.",
     photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop&crop=face",
     awardsCount: 8,
@@ -395,7 +444,7 @@ export const awards: Award[] = [
   { id: 8, name: "Cannes", category: "Palme d'Or", year: 2024, body: "Cannes Film Festival", movieTitle: "(500) Days of Summer", moviePoster: days500Poster, won: false, nominees: ["Dhurandhar: The Revenge", "Baramulla"] },
   { id: 9, name: "Golden Globe", category: "Best Foreign Language Film", year: 2024, body: "Golden Globes", movieTitle: "Kantara", moviePoster: kantaraPoster, won: true, nominees: ["Kung Fu Hustle", "The Family Man"] },
   { id: 10, name: "Academy Award", category: "Best Original Screenplay", year: 2023, body: "Academy Awards", movieTitle: "Seven", moviePoster: sevenPoster, won: true, nominees: ["Zodiac", "Whiplash"] },
-  { id: 11, name: "SAG Award", category: "Outstanding Performance - Cast", year: 2024, body: "SAG Awards", movieTitle: "Stranger Things", moviePoster: movies[14]?.poster || "", won: false, nominees: ["The Vampire Diaries", "The Family Man"] },
+  { id: 11, name: "SAG Award", category: "Outstanding Performance - Cast", year: 2024, body: "SAG Awards", movieTitle: "Stranger Things", moviePoster: strangerThingsPoster, won: false, nominees: ["The Vampire Diaries", "The Family Man"] },
   { id: 12, name: "National Film Award", category: "Best Feature Film", year: 2024, body: "National Film Awards", movieTitle: "Kantara", moviePoster: kantaraPoster, won: true, nominees: ["Dhurandhar: The Revenge", "Baramulla"] },
   { id: 13, name: "Padma Shri", category: "Distinguished Service in Arts", year: 2024, body: "Padma Shri", movieTitle: "Kantara", moviePoster: kantaraPoster, won: true, nominees: ["Manoj Bajpayee", "Rishab Shetty", "Ranveer Singh"] },
   { id: 14, name: "Padma Shri", category: "Excellence in Cinema", year: 2023, body: "Padma Shri", movieTitle: "The Family Man", moviePoster: familyManPoster, won: true, nominees: ["Manoj Bajpayee", "Shah Rukh Khan"] },

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Star, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Movie } from "@/data/mockData";
@@ -8,6 +9,8 @@ interface MovieCardProps {
 }
 
 export default function MovieCard({ movie, onClick }: MovieCardProps) {
+  const [liked, setLiked] = useState(false);
+
   return (
     <div
       onClick={() => onClick(movie)}
@@ -22,10 +25,10 @@ export default function MovieCard({ movie, onClick }: MovieCardProps) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
         <button
-          onClick={(e) => { e.stopPropagation(); }}
-          className="absolute right-2 top-2 rounded-full bg-background/60 p-1.5 text-muted-foreground opacity-0 backdrop-blur-sm transition-all hover:text-destructive group-hover:opacity-100"
+          onClick={(e) => { e.stopPropagation(); setLiked(!liked); }}
+          className={`absolute right-2 top-2 rounded-full bg-background/60 p-1.5 backdrop-blur-sm transition-all group-hover:opacity-100 ${liked ? "opacity-100 text-destructive" : "opacity-0 text-muted-foreground hover:text-destructive"}`}
         >
-          <Heart className="h-4 w-4" />
+          <Heart className={`h-4 w-4 transition-all ${liked ? "fill-destructive text-destructive scale-110" : ""}`} />
         </button>
         <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-background/70 px-2 py-0.5 text-xs font-semibold backdrop-blur-sm">
           <Star className="h-3 w-3 fill-primary text-primary" />

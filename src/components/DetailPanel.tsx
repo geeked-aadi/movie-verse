@@ -1,4 +1,5 @@
 import { X, Star, Clock, Globe, Film, Trophy, Ticket, Database } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Movie, Actor, Award } from "@/data/mockData";
@@ -28,7 +29,7 @@ export default function DetailPanel({ type, data, onClose }: DetailPanelProps) {
         </div>
 
         <div className="p-4 space-y-6">
-          {type === "movie" && <MovieDetail movie={data as Movie} />}
+          {type === "movie" && <MovieDetail movie={data as Movie} onClose={onClose} />}
           {type === "actor" && <ActorDetail actor={data as Actor} />}
           {type === "award" && <AwardDetail award={data as Award} />}
         </div>
@@ -50,7 +51,14 @@ function SQLQuerySection() {
   );
 }
 
-function MovieDetail({ movie }: { movie: Movie }) {
+function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) {
+  const navigate = useNavigate();
+
+  const handleBookTickets = () => {
+    onClose();
+    navigate(`/booking?movie=${encodeURIComponent(movie.title)}`);
+  };
+
   return (
     <>
       <img src={movie.poster} alt={movie.title} className="w-full rounded-lg object-contain" />
@@ -97,7 +105,7 @@ function MovieDetail({ movie }: { movie: Movie }) {
         <span>•</span>
         <span>Box Office: {movie.boxOffice}</span>
       </div>
-      <Button className="w-full gold-gradient text-primary-foreground font-semibold hover:opacity-90">
+      <Button onClick={handleBookTickets} className="w-full gold-gradient text-primary-foreground font-semibold hover:opacity-90">
         <Ticket className="mr-2 h-4 w-4" /> Book Tickets
       </Button>
       <SQLQuerySection />

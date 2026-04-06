@@ -27,13 +27,11 @@ export default function Navbar({ onSearch }: NavbarProps) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-border bg-card/95 backdrop-blur-md">
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <Star className="h-6 w-6 fill-primary text-primary" />
-          <span className="text-xl font-bold text-primary font-serif italic">MovieVerse</span>
+          <span className="text-xl font-bold text-primary tracking-wide" style={{ fontFamily: "'Georgia', 'Palatino Linotype', serif", fontStyle: "italic" }}>MovieVerse</span>
         </Link>
 
-        {/* Nav Links */}
         <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => {
             const isActive =
@@ -55,7 +53,6 @@ export default function Navbar({ onSearch }: NavbarProps) {
           })}
         </div>
 
-        {/* Search + Auth */}
         <div className="flex items-center gap-3">
           <form onSubmit={handleSearch} className="relative hidden sm:block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
