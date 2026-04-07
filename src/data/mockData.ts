@@ -138,6 +138,15 @@ export const movies: Movie[] = [
     awards: ["SAG Award - Outstanding Ensemble", "Emmy - Outstanding Drama (Nominated)"],
   },
   {
+    id: 20, title: "The Family Man", year: 2019, genre: ["Action", "Thriller", "Drama"], rating: 8.6,
+    director: "Raj & DK", duration: "Series", language: "Hindi",
+    synopsis: "A middle-class man secretly works as an intelligence officer for the National Investigation Agency.",
+    poster: familyManPoster, heroImage: familyManPoster,
+    budget: "₹83 Cr", boxOffice: "N/A",
+    cast: [{ name: "Manoj Bajpayee", role: "Srikant Tiwari" }, { name: "Priyamani", role: "Suchitra Tiwari" }],
+    awards: ["Best Web Series - Filmfare OTT Awards"],
+  },
+  {
     id: 7, title: "John Wick", year: 2014, genre: ["Action", "Thriller", "Crime"], rating: 7.4,
     director: "Chad Stahelski", duration: "1h 41min", language: "English",
     synopsis: "An ex-hitman comes out of retirement to track down the gangsters that killed his dog and took everything from him.",
@@ -208,15 +217,6 @@ export const movies: Movie[] = [
     budget: "₹25 Cr/ep", boxOffice: "N/A",
     cast: [{ name: "Nina Dobrev", role: "Elena Gilbert" }, { name: "Paul Wesley", role: "Stefan Salvatore" }, { name: "Ian Somerhalder", role: "Damon Salvatore" }],
     awards: ["People's Choice Award - Favorite Sci-Fi/Fantasy Show"],
-  },
-  {
-    id: 15, title: "Stranger Things", year: 2016, genre: ["Drama", "Fantasy", "Horror"], rating: 8.7,
-    director: "The Duffer Brothers", duration: "Series", language: "English",
-    synopsis: "When a young boy disappears, his mother, a police chief and his friends must confront terrifying supernatural forces.",
-    poster: strangerThingsPoster, heroImage: strangerThingsPoster,
-    budget: "₹249 Cr/season", boxOffice: "N/A",
-    cast: [{ name: "Millie Bobby Brown", role: "Eleven" }, { name: "Finn Wolfhard", role: "Mike Wheeler" }],
-    awards: ["SAG Award - Outstanding Ensemble", "Emmy - Outstanding Drama (Nominated)"],
   },
   {
     id: 16, title: "Whiplash", year: 2014, genre: ["Drama", "Music"], rating: 8.5,
