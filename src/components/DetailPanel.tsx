@@ -117,7 +117,7 @@ function ActorDetail({ actor }: { actor: Actor }) {
   return (
     <>
       <div className="flex items-center gap-4">
-        <img src={actor.photo} alt={actor.name} className="h-24 w-24 rounded-full object-cover border-2 border-primary" />
+        <img src={actor.photo} alt={actor.name} className="h-24 w-24 rounded-full object-cover object-top border-2 border-primary" />
         <div>
           <p className="text-sm text-muted-foreground">{actor.nationality} • {actor.gender}</p>
           <p className="text-sm text-muted-foreground">Age {actor.age}</p>
