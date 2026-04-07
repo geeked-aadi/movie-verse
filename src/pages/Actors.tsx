@@ -20,7 +20,7 @@ export default function Actors() {
               className="group cursor-pointer flex flex-col items-center rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1"
             >
               <div className="relative mb-3">
-                <img src={actor.photo} alt={actor.name} className="h-28 w-28 rounded-full object-cover border-2 border-border transition-colors group-hover:border-primary" loading="lazy" />
+                <img src={actor.photo} alt={actor.name} className="h-28 w-28 rounded-full object-cover object-top border-2 border-border transition-colors group-hover:border-primary" loading="lazy" />
                 <Badge className="absolute -bottom-1 left-1/2 -translate-x-1/2 gold-gradient text-primary-foreground text-[10px] px-1.5 py-0">
                   <Trophy className="mr-0.5 h-2.5 w-2.5" /> {actor.awardsCount}
                 </Badge>

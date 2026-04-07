@@ -61,7 +61,7 @@ function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) 
 
   return (
     <>
-      <img src={movie.poster} alt={movie.title} className="w-full rounded-lg object-contain" />
+      <img src={movie.poster} alt={movie.title} className="w-full max-h-80 rounded-lg object-contain mx-auto" />
       <div className="space-y-1">
         <p className="text-sm text-muted-foreground">Directed by {movie.director}</p>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
