@@ -111,6 +111,7 @@ export const movies: Movie[] = [
     budget: "₹1,162 Cr", boxOffice: "₹5,428 Cr",
     cast: [{ name: "Johnny Depp", role: "Captain Jack Sparrow" }, { name: "Orlando Bloom", role: "Will Turner" }, { name: "Keira Knightley", role: "Elizabeth Swann" }],
     awards: ["Best Actor - SAG (Nominated)", "Best Makeup - Academy Awards (Nominated)"],
+    trailerUrl: "https://www.youtube.com/embed/naQr0uTrH_s",
   },
   {
     id: 4, title: "Mad Max: Fury Road", year: 2015, genre: ["Action", "Adventure", "Sci-Fi"], rating: 8.1,
@@ -120,6 +121,7 @@ export const movies: Movie[] = [
     budget: "₹1,245 Cr", boxOffice: "₹3,113 Cr",
     cast: [{ name: "Tom Hardy", role: "Max Rockatansky" }, { name: "Charlize Theron", role: "Imperator Furiosa" }],
     awards: ["Best Film Editing - Academy Awards", "Best Costume Design - Academy Awards", "Best Production Design - Academy Awards"],
+    trailerUrl: "https://www.youtube.com/embed/hEJnMQG9ev8",
   },
   {
     id: 5, title: "Zathura: A Space Adventure", year: 2005, genre: ["Sci-Fi", "Adventure", "Family"], rating: 6.2,
@@ -129,6 +131,7 @@ export const movies: Movie[] = [
     budget: "₹540 Cr", boxOffice: "₹531 Cr",
     cast: [{ name: "Josh Hutcherson", role: "Walter" }, { name: "Jonah Bobo", role: "Danny" }, { name: "Dax Shepard", role: "Astronaut" }],
     awards: [],
+    trailerUrl: "https://www.youtube.com/embed/ek0tCSRJbGI",
   },
   {
     id: 6, title: "Stranger Things", year: 2016, genre: ["Drama", "Fantasy", "Horror"], rating: 8.7,
@@ -138,6 +141,7 @@ export const movies: Movie[] = [
     budget: "₹249 Cr/season", boxOffice: "N/A",
     cast: [{ name: "Millie Bobby Brown", role: "Eleven" }, { name: "Finn Wolfhard", role: "Mike Wheeler" }],
     awards: ["SAG Award - Outstanding Ensemble", "Emmy - Outstanding Drama (Nominated)"],
+    trailerUrl: "https://www.youtube.com/embed/b9EkMc79ZSU",
   },
   {
     id: 20, title: "The Family Man", year: 2019, genre: ["Action", "Thriller", "Drama"], rating: 8.6,
@@ -147,6 +151,7 @@ export const movies: Movie[] = [
     budget: "₹83 Cr", boxOffice: "N/A",
     cast: [{ name: "Manoj Bajpayee", role: "Srikant Tiwari" }, { name: "Priyamani", role: "Suchitra Tiwari" }],
     awards: ["Best Web Series - Filmfare OTT Awards"],
+    trailerUrl: "https://www.youtube.com/embed/KdH8Ym2HGN0",
   },
   {
     id: 7, title: "John Wick", year: 2014, genre: ["Action", "Thriller", "Crime"], rating: 7.4,
@@ -156,6 +161,7 @@ export const movies: Movie[] = [
     budget: "₹166 Cr", boxOffice: "₹714 Cr",
     cast: [{ name: "Keanu Reeves", role: "John Wick" }, { name: "Michael Nyqvist", role: "Viggo Tarasov" }],
     awards: [],
+    trailerUrl: "https://www.youtube.com/embed/C0BMx-qxsP4",
   },
   {
     id: 8, title: "Kantara", year: 2022, genre: ["Action", "Drama", "Thriller"], rating: 8.4,
@@ -165,6 +171,7 @@ export const movies: Movie[] = [
     budget: "₹25 Cr", boxOffice: "₹996 Cr",
     cast: [{ name: "Rishab Shetty", role: "Shiva" }, { name: "Sapthami Gowda", role: "Leela" }],
     awards: ["Best Feature Film - National Film Awards"],
+    trailerUrl: "https://www.youtube.com/embed/GFVh4PFp3TM",
   },
   {
     id: 9, title: "Kung Fu Hustle", year: 2004, genre: ["Action", "Comedy", "Fantasy"], rating: 7.7,
@@ -174,6 +181,7 @@ export const movies: Movie[] = [
     budget: "₹166 Cr", boxOffice: "₹847 Cr",
     cast: [{ name: "Stephen Chow", role: "Sing" }, { name: "Yuen Wah", role: "Landlord" }],
     awards: ["Best Film - Hong Kong Film Awards"],
+    trailerUrl: "https://www.youtube.com/embed/i1tHu0F3VSo",
   },
   {
     id: 10, title: "Baramulla", year: 2024, genre: ["Thriller", "Drama"], rating: 7.5,
@@ -183,6 +191,7 @@ export const movies: Movie[] = [
     budget: "₹66 Cr", boxOffice: "N/A",
     cast: [{ name: "Unknown", role: "Lead" }],
     awards: [],
+    trailerUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
   {
     id: 11, title: "The Karate Kid", year: 1984, genre: ["Drama", "Family", "Sport"], rating: 7.3,
@@ -192,6 +201,7 @@ export const movies: Movie[] = [
     budget: "₹66 Cr", boxOffice: "₹755 Cr",
     cast: [{ name: "Ralph Macchio", role: "Daniel LaRusso" }, { name: "Pat Morita", role: "Mr. Miyagi" }],
     awards: ["Best Supporting Actor - Academy Awards (Nominated)"],
+    trailerUrl: "https://www.youtube.com/embed/Bg21M2zwG9Q",
   },
   {
     id: 12, title: "The Meg", year: 2018, genre: ["Action", "Sci-Fi", "Horror"], rating: 5.6,
@@ -201,6 +211,7 @@ export const movies: Movie[] = [
     budget: "₹1,079 Cr", boxOffice: "₹4,399 Cr",
     cast: [{ name: "Jason Statham", role: "Jonas Taylor" }, { name: "Li Bingbing", role: "Suyin" }],
     awards: [],
+    trailerUrl: "https://www.youtube.com/embed/udm5jUA-2bs",
   },
   {
     id: 13, title: "Bhoot and Friends", year: 2010, genre: ["Comedy", "Horror", "Family"], rating: 5.8,
@@ -210,6 +221,7 @@ export const movies: Movie[] = [
     budget: "₹17 Cr", boxOffice: "₹42 Cr",
     cast: [{ name: "Ishaan Khattar", role: "Lead Kid" }],
     awards: [],
+    trailerUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
   {
     id: 14, title: "The Vampire Diaries", year: 2009, genre: ["Drama", "Fantasy", "Horror"], rating: 7.7,
@@ -219,6 +231,7 @@ export const movies: Movie[] = [
     budget: "₹25 Cr/ep", boxOffice: "N/A",
     cast: [{ name: "Nina Dobrev", role: "Elena Gilbert" }, { name: "Paul Wesley", role: "Stefan Salvatore" }, { name: "Ian Somerhalder", role: "Damon Salvatore" }],
     awards: ["People's Choice Award - Favorite Sci-Fi/Fantasy Show"],
+    trailerUrl: "https://www.youtube.com/embed/uFPOb_p0tEo",
   },
   {
     id: 16, title: "Whiplash", year: 2014, genre: ["Drama", "Music"], rating: 8.5,
@@ -228,6 +241,7 @@ export const movies: Movie[] = [
     budget: "₹27 Cr", boxOffice: "₹407 Cr",
     cast: [{ name: "Miles Teller", role: "Andrew Neiman" }, { name: "J.K. Simmons", role: "Terence Fletcher" }],
     awards: ["Best Supporting Actor - Academy Awards", "Best Film Editing - Academy Awards", "Best Sound Mixing - Academy Awards"],
+    trailerUrl: "https://www.youtube.com/embed/7d_jQycdQGo",
   },
   {
     id: 17, title: "Dhamaal", year: 2007, genre: ["Comedy", "Adventure"], rating: 7.0,
@@ -237,6 +251,7 @@ export const movies: Movie[] = [
     budget: "₹22 Cr", boxOffice: "₹54 Cr",
     cast: [{ name: "Sanjay Dutt", role: "Inspector Kabir" }, { name: "Arshad Warsi", role: "Adi" }, { name: "Riteish Deshmukh", role: "Roy" }, { name: "Javed Jaffrey", role: "Manav" }],
     awards: [],
+    trailerUrl: "https://www.youtube.com/embed/rKDJsHCCYDw",
   },
   {
     id: 18, title: "Zodiac", year: 2007, genre: ["Crime", "Drama", "Mystery"], rating: 7.7,
@@ -246,6 +261,7 @@ export const movies: Movie[] = [
     budget: "₹540 Cr", boxOffice: "₹697 Cr",
     cast: [{ name: "Jake Gyllenhaal", role: "Robert Graysmith" }, { name: "Robert Downey Jr.", role: "Paul Avery" }, { name: "Mark Ruffalo", role: "Inspector David Toschi" }],
     awards: [],
+    trailerUrl: "https://www.youtube.com/embed/yNncHPl1UEA",
   },
 ];
 
@@ -258,6 +274,7 @@ export const recommendedMovies: Movie[] = [
     budget: "₹274 Cr", boxOffice: "₹2,714 Cr",
     cast: [{ name: "Brad Pitt", role: "Detective David Mills" }, { name: "Morgan Freeman", role: "Detective William Somerset" }],
     awards: ["Best Film Editing - Academy Awards (Nominated)"],
+    trailerUrl: "https://www.youtube.com/embed/znmZoVkCjpI",
   },
   {
     id: 102, title: "Andhadhun", year: 2018, genre: ["Crime", "Thriller", "Comedy"], rating: 8.3,
@@ -267,6 +284,7 @@ export const recommendedMovies: Movie[] = [
     budget: "₹32 Cr", boxOffice: "₹456 Cr",
     cast: [{ name: "Ayushmann Khurrana", role: "Akash" }, { name: "Tabu", role: "Simi" }, { name: "Radhika Apte", role: "Sophie" }],
     awards: ["Best Hindi Film - National Film Awards", "Filmfare Award - Best Film"],
+    trailerUrl: "https://www.youtube.com/embed/2iVYI1GLP_4",
   },
   {
     id: 103, title: "Interstellar", year: 2014, genre: ["Sci-Fi", "Drama"], rating: 8.6,
@@ -276,6 +294,7 @@ export const recommendedMovies: Movie[] = [
     budget: "₹1,370 Cr", boxOffice: "₹5,619 Cr",
     cast: [{ name: "Matthew McConaughey", role: "Cooper" }, { name: "Anne Hathaway", role: "Brand" }],
     awards: ["Best Visual Effects - Academy Awards"],
+    trailerUrl: "https://www.youtube.com/embed/zSWdZVtXT7E",
   },
   {
     id: 104, title: "Rustom", year: 2016, genre: ["Crime", "Drama", "Thriller"], rating: 6.5,
@@ -285,6 +304,7 @@ export const recommendedMovies: Movie[] = [
     budget: "₹45 Cr", boxOffice: "₹218 Cr",
     cast: [{ name: "Akshay Kumar", role: "Rustom Pavri" }, { name: "Ileana D'Cruz", role: "Cynthia Pavri" }],
     awards: ["National Film Award - Best Film on Social Issues"],
+    trailerUrl: "https://www.youtube.com/embed/7YnhjHhbKQY",
   },
   {
     id: 105, title: "Parasite", year: 2019, genre: ["Drama", "Thriller"], rating: 8.5,
@@ -294,6 +314,7 @@ export const recommendedMovies: Movie[] = [
     budget: "₹91 Cr", boxOffice: "₹2,183 Cr",
     cast: [{ name: "Song Kang-ho", role: "Kim Ki-taek" }, { name: "Choi Woo-shik", role: "Kim Ki-woo" }],
     awards: ["Best Picture - Academy Awards", "Best Director - Academy Awards"],
+    trailerUrl: "https://www.youtube.com/embed/5xH0HfJHsaY",
   },
   {
     id: 106, title: "Golmaal: Fun Unlimited", year: 2006, genre: ["Comedy", "Drama"], rating: 7.1,
@@ -303,6 +324,7 @@ export const recommendedMovies: Movie[] = [
     budget: "₹13 Cr", boxOffice: "₹52 Cr",
     cast: [{ name: "Ajay Devgan", role: "Gopal" }, { name: "Arshad Warsi", role: "Laxman 1" }, { name: "Tusshar Kapoor", role: "Lucky" }, { name: "Sharman Joshi", role: "Laxman 2" }],
     awards: [],
+    trailerUrl: "https://www.youtube.com/embed/IKUQEM7tKPg",
   },
 ];
 
