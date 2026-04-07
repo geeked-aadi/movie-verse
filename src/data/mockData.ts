@@ -53,6 +53,7 @@ export interface Movie {
   boxOffice: string;
   cast: { name: string; role: string }[];
   awards: string[];
+  trailerUrl?: string;
 }
 
 export interface Actor {
