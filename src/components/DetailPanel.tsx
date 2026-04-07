@@ -61,7 +61,7 @@ function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) 
 
   return (
     <>
-      <img src={movie.poster} alt={movie.title} className="w-full rounded-lg object-contain" />
+      <img src={movie.poster} alt={movie.title} className="w-full max-h-80 rounded-lg object-contain mx-auto" />
       <div className="space-y-1">
         <p className="text-sm text-muted-foreground">Directed by {movie.director}</p>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
@@ -117,7 +117,7 @@ function ActorDetail({ actor }: { actor: Actor }) {
   return (
     <>
       <div className="flex items-center gap-4">
-        <img src={actor.photo} alt={actor.name} className="h-24 w-24 rounded-full object-cover border-2 border-primary" />
+        <img src={actor.photo} alt={actor.name} className="h-24 w-24 rounded-full object-cover object-top border-2 border-primary" />
         <div>
           <p className="text-sm text-muted-foreground">{actor.nationality} • {actor.gender}</p>
           <p className="text-sm text-muted-foreground">Age {actor.age}</p>
