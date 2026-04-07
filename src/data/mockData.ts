@@ -92,6 +92,7 @@ export const movies: Movie[] = [
     budget: "₹415 Cr", boxOffice: "₹2,075 Cr",
     cast: [{ name: "Ranveer Singh", role: "Dhurandhar" }, { name: "Jyoti Deshpande", role: "Producer" }],
     awards: [],
+    trailerUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
   {
     id: 2, title: "(500) Days of Summer", year: 2009, genre: ["Romance", "Comedy", "Drama"], rating: 7.7,
