@@ -102,6 +102,7 @@ export const movies: Movie[] = [
     budget: "₹62 Cr", boxOffice: "₹498 Cr",
     cast: [{ name: "Joseph Gordon-Levitt", role: "Tom Hansen" }, { name: "Zooey Deschanel", role: "Summer Finn" }],
     awards: ["Best First Feature - Independent Spirit Awards"],
+    trailerUrl: "https://www.youtube.com/embed/PsD0NpFSADM",
   },
   {
     id: 3, title: "Pirates of the Caribbean", year: 2003, genre: ["Adventure", "Fantasy", "Action"], rating: 8.0,
