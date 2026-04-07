@@ -1,8 +1,10 @@
-import { X, Star, Clock, Globe, Film, Trophy, Ticket, Database } from "lucide-react";
+import { useState } from "react";
+import { X, Star, Clock, Globe, Film, Trophy, Ticket, Database, Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { Movie, Actor, Award } from "@/data/mockData";
+import TrailerModal from "@/components/TrailerModal";
+import { movies, recommendedMovies, type Movie, type Actor, type Award } from "@/data/mockData";
 
 interface DetailPanelProps {
   type: "movie" | "actor" | "award";
