@@ -1,8 +1,10 @@
-import { X, Star, Clock, Globe, Film, Trophy, Ticket, Database } from "lucide-react";
+import { useState } from "react";
+import { X, Star, Clock, Globe, Film, Trophy, Ticket, Database, Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { Movie, Actor, Award } from "@/data/mockData";
+import TrailerModal from "@/components/TrailerModal";
+import { movies, recommendedMovies, type Movie, type Actor, type Award } from "@/data/mockData";
 
 interface DetailPanelProps {
   type: "movie" | "actor" | "award";
@@ -53,11 +55,18 @@ function SQLQuerySection() {
 
 function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) {
   const navigate = useNavigate();
+  const [showTrailer, setShowTrailer] = useState(false);
 
   const handleBookTickets = () => {
     onClose();
     navigate(`/booking?movie=${encodeURIComponent(movie.title)}`);
   };
+
+  // Get similar movies based on shared genres
+  const allMovies = [...movies, ...recommendedMovies];
+  const similarMovies = allMovies
+    .filter((m) => m.id !== movie.id && m.genre.some((g) => movie.genre.includes(g)))
+    .slice(0, 6);
 
   return (
     <>
@@ -105,11 +114,63 @@ function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) 
         <span>•</span>
         <span>Box Office: {movie.boxOffice}</span>
       </div>
-      <Button onClick={handleBookTickets} className="w-full gold-gradient text-primary-foreground font-semibold hover:opacity-90">
-        <Ticket className="mr-2 h-4 w-4" /> Book Tickets
-      </Button>
+
+      {/* Action Buttons */}
+      <div className="flex gap-2">
+        <Button onClick={handleBookTickets} className="flex-1 gold-gradient text-primary-foreground font-semibold hover:opacity-90">
+          <Ticket className="mr-2 h-4 w-4" /> Book Tickets
+        </Button>
+        <Button
+          onClick={() => setShowTrailer(true)}
+          variant="outline"
+          className="flex-1 border-primary/30 text-primary hover:bg-primary/10 font-semibold"
+        >
+          <Play className="mr-2 h-4 w-4 fill-primary" /> Watch Trailer
+        </Button>
+      </div>
+
+      {/* Recommended Similar Movies */}
+      {similarMovies.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-1">
+            <Film className="h-4 w-4 text-primary" /> Recommended Similar Movies
+          </h3>
+          <div className="grid grid-cols-3 gap-2">
+            {similarMovies.map((m) => (
+              <SimilarMovieCard key={m.id} movie={m} onClose={onClose} />
+            ))}
+          </div>
+        </div>
+      )}
+
       <SQLQuerySection />
+
+      {showTrailer && <TrailerModal movie={movie} onClose={() => setShowTrailer(false)} />}
     </>
+  );
+}
+
+function SimilarMovieCard({ movie, onClose }: { movie: Movie; onClose: () => void }) {
+  const navigate = useNavigate();
+  return (
+    <div
+      onClick={() => {
+        onClose();
+        navigate('/movies');
+      }}
+      className="group cursor-pointer rounded-md border border-border bg-panel overflow-hidden transition-all hover:border-primary/40 hover:shadow-md hover:shadow-primary/5 hover:-translate-y-0.5"
+    >
+      <div className="aspect-[2/3] overflow-hidden">
+        <img src={movie.poster} alt={movie.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+      </div>
+      <div className="p-1.5">
+        <p className="text-[11px] font-medium text-foreground truncate group-hover:text-primary transition-colors">{movie.title}</p>
+        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+          <Star className="h-2.5 w-2.5 fill-primary text-primary" />
+          <span>{movie.rating}</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
