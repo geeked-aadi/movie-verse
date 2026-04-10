@@ -62,10 +62,16 @@ function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) 
     navigate(`/booking?movie=${encodeURIComponent(movie.title)}`);
   };
 
-  // Get similar movies based on shared genres
+  // Get similar movies based on shared genres - better matching with genre overlap scoring
   const allMovies = [...movies, ...recommendedMovies];
   const similarMovies = allMovies
-    .filter((m) => m.id !== movie.id && m.genre.some((g) => movie.genre.includes(g)))
+    .filter((m) => m.id !== movie.id)
+    .map((m) => ({
+      ...m,
+      genreOverlap: m.genre.filter((g) => movie.genre.includes(g)).length,
+    }))
+    .filter((m) => m.genreOverlap > 0)
+    .sort((a, b) => b.genreOverlap - a.genreOverlap || b.rating - a.rating)
     .slice(0, 6);
 
   return (
