@@ -29,7 +29,7 @@ export default function Navbar({ onSearch }: NavbarProps) {
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <Star className="h-6 w-6 fill-primary text-primary" />
-          <span className="text-xl font-bold text-primary tracking-wide" style={{ fontFamily: "'Pacifico', 'Satisfy', 'Dancing Script', cursive" }}>MovieVerse</span>
+          <span className="text-xl font-bold text-primary tracking-wide" style={{ fontFamily: "'Englebert', cursive" }}>MovieVerse</span>
         </Link>
 
         <div className="hidden items-center gap-1 md:flex">
