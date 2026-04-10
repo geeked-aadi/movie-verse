@@ -42,6 +42,9 @@ import amitabhBachchanPhoto from "@/assets/amitabh_bachchan.jpg";
 import tomHanksPhoto from "@/assets/tom_hanks.jpg";
 import merylStreepPhoto from "@/assets/meryl_streep.jpg";
 import akshayKumarPhoto from "@/assets/akshay_kumar.webp";
+import matrixPoster from "@/assets/matrix.jpg";
+import tumbbadPoster from "@/assets/tumbbad.webp";
+import forrestGumpPoster from "@/assets/forrest_gump.webp";
 
 export interface Movie {
   id: number;
@@ -358,7 +361,7 @@ export const recommendedMovies: Movie[] = [
     id: 203, title: "The Matrix", year: 1999, genre: ["Action", "Sci-Fi"], rating: 8.7,
     director: "The Wachowskis", duration: "2h 16min", language: "English",
     synopsis: "A computer hacker learns about the true nature of his reality and his role in the war against its controllers.",
-    poster: "https://m.media-amazon.com/images/M/MV5BN2NmN2VhMTQtMDNiOS00NDlhLTliMjgtODE2ZDYxZjlhZjhkXkEyXkFqcGc@._V1_.jpg", heroImage: "",
+    poster: matrixPoster, heroImage: "",
     budget: "₹520 Cr", boxOffice: "₹3,738 Cr",
     cast: [{ name: "Keanu Reeves", role: "Neo" }, { name: "Laurence Fishburne", role: "Morpheus" }],
     awards: ["Best Visual Effects - Academy Awards", "Best Film Editing - Academy Awards"],
@@ -408,7 +411,7 @@ export const recommendedMovies: Movie[] = [
     id: 208, title: "Forrest Gump", year: 1994, genre: ["Drama", "Romance"], rating: 8.8,
     director: "Robert Zemeckis", duration: "2h 22min", language: "English",
     synopsis: "The presidencies of Kennedy and Johnson through Vietnam and Watergate, as seen through the eyes of an Alabama man with a low IQ.",
-    poster: "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNjU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg", heroImage: "",
+    poster: forrestGumpPoster, heroImage: "",
     budget: "₹460 Cr", boxOffice: "₹5,700 Cr",
     cast: [{ name: "Tom Hanks", role: "Forrest Gump" }, { name: "Robin Wright", role: "Jenny Curran" }],
     awards: ["Best Picture - Academy Awards", "Best Actor - Academy Awards", "Best Director - Academy Awards"],
@@ -418,7 +421,7 @@ export const recommendedMovies: Movie[] = [
     id: 209, title: "Tumbbad", year: 2018, genre: ["Horror", "Fantasy", "Drama"], rating: 8.2,
     director: "Rahi Anil Barve", duration: "1h 44min", language: "Hindi",
     synopsis: "A mythological story about a village cursed by a goddess. A greedy ancestor builds a shrine for the first born and his descendants look for the hidden treasure.",
-    poster: "https://m.media-amazon.com/images/M/MV5BYmQxNmU4ZjgtYzE5Mi00ZDlhLTlhODctMmM1OGFhMGYxMGQxXkEyXkFqcGdeQXVyMzgxMDA0Nzk@._V1_.jpg", heroImage: "",
+    poster: tumbbadPoster, heroImage: "",
     budget: "₹5 Cr", boxOffice: "₹36 Cr",
     cast: [{ name: "Sohum Shah", role: "Vinayak Rao" }, { name: "Jyoti Malshe", role: "Vinayak's Mother" }],
     awards: ["Filmfare Award - Best Art Direction"],
