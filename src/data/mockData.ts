@@ -32,10 +32,16 @@ import andhadhunPoster from "@/assets/andhadhun.jpg";
 import rustomPoster from "@/assets/rustom.jpg";
 import baramulla2Poster from "@/assets/baramulla2.jpg";
 import strangerThingsPoster from "@/assets/stranger_things.jpg";
-import manojBajpayeePhoto from "@/assets/manoj_bajpayee.jpg";
+import manojBajpayeePhoto from "@/assets/manoj_bajpayee2.jpg";
 import vidyaBalanPhoto from "@/assets/vidya_balan.webp";
 import emmaWatsonPhoto from "@/assets/emma_watson.webp";
 import leonardoDiCaprioPhoto from "@/assets/leonardo_dicaprio.webp";
+import aliaBhattPhoto from "@/assets/alia_bhatt.webp";
+import ranbirKapoorPhoto from "@/assets/ranbir_kapoor.jpg";
+import amitabhBachchanPhoto from "@/assets/amitabh_bachchan.jpg";
+import tomHanksPhoto from "@/assets/tom_hanks.jpg";
+import merylStreepPhoto from "@/assets/meryl_streep.jpg";
+import akshayKumarPhoto from "@/assets/akshay_kumar.webp";
 
 export interface Movie {
   id: number;
@@ -511,6 +517,90 @@ export const actors: Actor[] = [
       { title: "Titanic", year: 1997, role: "Jack Dawson" },
     ],
     awards: ["Best Actor - Academy Awards (The Revenant)", "Golden Globe - Best Actor", "SAG Award - Best Actor"],
+  },
+  {
+    id: 14, name: "Alia Bhatt", nationality: "Indian", dob: "1993-03-15", age: 31, gender: "Female",
+    biography: "Alia Bhatt is one of the most talented and versatile actresses in Indian cinema. Known for her powerful performances in Highway, Raazi, and Gangubai Kathiawadi, she has established herself as a leading star.",
+    photo: aliaBhattPhoto,
+    awardsCount: 9,
+    knownFor: ["Raazi", "Gangubai Kathiawadi", "Highway", "Gully Boy"],
+    filmography: [
+      { title: "Gangubai Kathiawadi", year: 2022, role: "Gangubai" },
+      { title: "RRR", year: 2022, role: "Sita" },
+      { title: "Raazi", year: 2018, role: "Sehmat Khan" },
+      { title: "Highway", year: 2014, role: "Veera Tripathi" },
+    ],
+    awards: ["Filmfare Award - Best Actress (multiple)", "IIFA Award - Best Actress", "National Film Award - Special Jury"],
+  },
+  {
+    id: 15, name: "Ranbir Kapoor", nationality: "Indian", dob: "1982-09-28", age: 42, gender: "Male",
+    biography: "Ranbir Kapoor is an Indian actor from the legendary Kapoor family. Known for his nuanced performances in Rockstar, Barfi!, and Animal, he is one of Bollywood's most talented leading men.",
+    photo: ranbirKapoorPhoto,
+    awardsCount: 8,
+    knownFor: ["Rockstar", "Barfi!", "Animal", "Sanju"],
+    filmography: [
+      { title: "Animal", year: 2023, role: "Ranvijay Singh" },
+      { title: "Brahmastra", year: 2022, role: "Shiva" },
+      { title: "Sanju", year: 2018, role: "Sanjay Dutt" },
+      { title: "Barfi!", year: 2012, role: "Murphy 'Barfi' Johnson" },
+    ],
+    awards: ["Filmfare Award - Best Actor (multiple)", "IIFA Award - Best Actor", "Star Screen Award"],
+  },
+  {
+    id: 16, name: "Amitabh Bachchan", nationality: "Indian", dob: "1942-10-11", age: 82, gender: "Male",
+    biography: "Amitabh Bachchan, the 'Shahenshah of Bollywood', is one of the most influential actors in the history of Indian cinema. With a career spanning over five decades, he remains an iconic figure globally.",
+    photo: amitabhBachchanPhoto,
+    awardsCount: 25,
+    knownFor: ["Sholay", "Deewar", "Don", "Piku"],
+    filmography: [
+      { title: "Piku", year: 2015, role: "Bhaskor Banerjee" },
+      { title: "Black", year: 2005, role: "Debraj Sahai" },
+      { title: "Sholay", year: 1975, role: "Jai" },
+      { title: "Deewar", year: 1975, role: "Vijay Verma" },
+    ],
+    awards: ["National Film Award - Best Actor (4 times)", "Padma Vibhushan", "Dadasaheb Phalke Award"],
+  },
+  {
+    id: 17, name: "Tom Hanks", nationality: "American", dob: "1956-07-09", age: 68, gender: "Male",
+    biography: "Tom Hanks is an American actor and filmmaker regarded as one of the greatest actors of all time. Known for Forrest Gump, Cast Away, and Saving Private Ryan, he has won two consecutive Academy Awards.",
+    photo: tomHanksPhoto,
+    awardsCount: 18,
+    knownFor: ["Forrest Gump", "Cast Away", "Saving Private Ryan", "The Green Mile"],
+    filmography: [
+      { title: "A Man Called Otto", year: 2022, role: "Otto Anderson" },
+      { title: "Forrest Gump", year: 1994, role: "Forrest Gump" },
+      { title: "Cast Away", year: 2000, role: "Chuck Noland" },
+      { title: "Saving Private Ryan", year: 1998, role: "Captain Miller" },
+    ],
+    awards: ["Best Actor - Academy Awards (2 times)", "Presidential Medal of Freedom", "Kennedy Center Honors"],
+  },
+  {
+    id: 18, name: "Meryl Streep", nationality: "American", dob: "1949-06-22", age: 75, gender: "Female",
+    biography: "Meryl Streep is widely regarded as the greatest actress of her generation. With a record 21 Academy Award nominations and 3 wins, she is the most decorated actress in Hollywood history.",
+    photo: merylStreepPhoto,
+    awardsCount: 22,
+    knownFor: ["The Devil Wears Prada", "Sophie's Choice", "Mamma Mia!", "The Iron Lady"],
+    filmography: [
+      { title: "Don't Look Up", year: 2021, role: "President Orlean" },
+      { title: "The Iron Lady", year: 2011, role: "Margaret Thatcher" },
+      { title: "The Devil Wears Prada", year: 2006, role: "Miranda Priestly" },
+      { title: "Sophie's Choice", year: 1982, role: "Sophie" },
+    ],
+    awards: ["Best Actress - Academy Awards (3 times)", "Presidential Medal of Freedom", "Golden Globe Cecil B. DeMille Award"],
+  },
+  {
+    id: 19, name: "Akshay Kumar", nationality: "Indian", dob: "1967-09-09", age: 57, gender: "Male",
+    biography: "Akshay Kumar is one of the most prolific and commercially successful actors in Indian cinema. Known for his action roles and patriotic films, he has delivered numerous blockbusters across genres.",
+    photo: akshayKumarPhoto,
+    awardsCount: 13,
+    knownFor: ["Rustom", "Hera Pheri", "Airlift", "Padman"],
+    filmography: [
+      { title: "Rustom", year: 2016, role: "Rustom Pavri" },
+      { title: "Airlift", year: 2016, role: "Ranjit Katyal" },
+      { title: "Hera Pheri", year: 2000, role: "Raju" },
+      { title: "Padman", year: 2018, role: "Lakshmikant Chauhan" },
+    ],
+    awards: ["National Film Award - Best Actor", "Padma Shri", "Filmfare Award - Best Actor"],
   },
 ];
 
