@@ -7,7 +7,7 @@ export default function PiracyFooter() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
             <Star className="h-4 w-4 fill-primary text-primary" />
-            <span className="font-bold text-primary text-sm tracking-wide" style={{ fontFamily: "'Pacifico', 'Satisfy', 'Dancing Script', cursive" }}>MovieVerse</span>
+            <span className="font-bold text-primary text-sm tracking-wide" style={{ fontFamily: "'Englebert', cursive" }}>MovieVerse</span>
           </div>
           <div className="flex items-center gap-4">
             <a href="#" className="hover:text-primary transition-colors">About</a>
