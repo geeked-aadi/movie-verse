@@ -14,7 +14,7 @@ export default function Login() {
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <Star className="h-8 w-8 fill-primary text-primary" />
-            <span className="text-2xl font-bold text-primary">CineVault</span>
+            <span className="text-2xl font-bold text-primary" style={{ fontFamily: "'Englebert', cursive" }}>MovieVerse</span>
           </div>
           <p className="text-sm text-muted-foreground">
             {isRegister ? "Create your account" : "Welcome back"}
