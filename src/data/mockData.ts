@@ -1,3 +1,4 @@
+import phirHeraPheriPhoto from "@/assets/phir_hera_pheri.webp";
 import dhurandharPoster from "@/assets/dhurandhar.jpg";
 import days500Poster from "@/assets/500days.webp";
 import familyManPoster from "@/assets/family_man.jpg";
