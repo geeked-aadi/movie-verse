@@ -66,6 +66,13 @@ export interface Movie {
   trailerUrl?: string;
 }
 
+export interface ActorAward {
+  name: string;
+  category: string;
+  year: number;
+  result: "Won" | "Nominated";
+}
+
 export interface Actor {
   id: number;
   name: string;
@@ -76,9 +83,14 @@ export interface Actor {
   biography: string;
   photo: string;
   awardsCount: number;
+  primaryRole: string;
+  placeOfBirth: string;
+  height: string;
+  activeYears: string;
+  socialLinks: { platform: string; url: string }[];
   knownFor: string[];
   filmography: { title: string; year: number; role: string }[];
-  awards: string[];
+  awards: ActorAward[];
 }
 
 export interface Award {
