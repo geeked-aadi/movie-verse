@@ -1,19 +1,38 @@
 import { useState } from "react";
-import { Trophy } from "lucide-react";
+import { Trophy, MapPin, Calendar, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import DetailPanel from "@/components/DetailPanel";
 import PiracyFooter from "@/components/PiracyFooter";
 import { actors, type Actor } from "@/data/mockData";
 
 export default function Actors() {
   const [selected, setSelected] = useState<Actor | null>(null);
+  const [search, setSearch] = useState("");
+
+  const filtered = actors.filter((a) =>
+    a.name.toLowerCase().includes(search.toLowerCase()) ||
+    a.primaryRole.toLowerCase().includes(search.toLowerCase()) ||
+    a.nationality.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen pt-16 flex flex-col">
       <div className="mx-auto max-w-7xl px-4 py-8 flex-1">
-        <h1 className="text-3xl font-bold mb-6">Actors</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h1 className="text-3xl font-bold">Actors</h1>
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search actors..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </div>
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {actors.map((actor) => (
+          {filtered.map((actor) => (
             <div
               key={actor.id}
               onClick={() => setSelected(actor)}
@@ -26,11 +45,24 @@ export default function Actors() {
                 </Badge>
               </div>
               <h3 className="text-sm font-semibold text-foreground text-center group-hover:text-primary transition-colors">{actor.name}</h3>
-              <p className="text-xs text-muted-foreground">{actor.nationality}</p>
-              <p className="text-xs text-muted-foreground">Age {actor.age}</p>
+              <Badge variant="outline" className="mt-1 text-[10px] px-1.5 py-0 border-primary/30 text-primary">
+                {actor.primaryRole}
+              </Badge>
+              <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                <span className="truncate max-w-[120px]">{actor.placeOfBirth.split(",")[0]}</span>
+              </div>
+              <div className="flex items-center gap-1 mt-0.5 text-xs text-muted-foreground">
+                <Calendar className="h-3 w-3" />
+                <span>{actor.activeYears}</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-1">{actor.height}</p>
             </div>
           ))}
         </div>
+        {filtered.length === 0 && (
+          <p className="text-center text-muted-foreground py-12">No actors found matching "{search}"</p>
+        )}
       </div>
       <PiracyFooter />
       {selected && <DetailPanel type="actor" data={selected} onClose={() => setSelected(null)} />}
