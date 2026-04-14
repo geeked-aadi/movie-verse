@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Star, Clock, Globe, Film, Trophy, Ticket, Database, Play } from "lucide-react";
+import { X, Star, Clock, Globe, Film, Trophy, Ticket, Database, Play, MapPin, Ruler, Calendar, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -186,6 +186,9 @@ function ActorDetail({ actor }: { actor: Actor }) {
       <div className="flex items-center gap-4">
         <img src={actor.photo} alt={actor.name} className="h-24 w-24 rounded-full object-cover object-top border-2 border-primary" />
         <div>
+          <Badge variant="secondary" className="mb-1 bg-accent/10 text-accent-foreground border-accent/20 text-xs">
+            {actor.primaryRole}
+          </Badge>
           <p className="text-sm text-muted-foreground">{actor.nationality} • {actor.gender}</p>
           <p className="text-sm text-muted-foreground">Age {actor.age}</p>
           <Badge variant="secondary" className="mt-1 bg-primary/10 text-primary border-primary/20">
@@ -193,6 +196,47 @@ function ActorDetail({ actor }: { actor: Actor }) {
           </Badge>
         </div>
       </div>
+
+      {/* Info Grid */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
+          <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+          <div>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Place of Birth</p>
+            <p className="text-xs text-foreground font-medium">{actor.placeOfBirth}</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
+          <Ruler className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+          <div>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Height</p>
+            <p className="text-xs text-foreground font-medium">{actor.height}</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
+          <Calendar className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+          <div>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Active Years</p>
+            <p className="text-xs text-foreground font-medium">{actor.activeYears}</p>
+          </div>
+        </div>
+        {actor.socialLinks.length > 0 && (
+          <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
+            <ExternalLink className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Social</p>
+              <div className="flex flex-wrap gap-1.5 mt-0.5">
+                {actor.socialLinks.map((link) => (
+                  <a key={link.platform} href={link.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline font-medium">
+                    {link.platform}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-1">Biography</h3>
         <p className="text-sm text-muted-foreground leading-relaxed">{actor.biography}</p>
@@ -224,9 +268,22 @@ function ActorDetail({ actor }: { actor: Actor }) {
           <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1">
             <Trophy className="h-4 w-4 text-primary" /> Awards
           </h3>
-          {actor.awards.map((a) => (
-            <p key={a} className="text-sm text-muted-foreground">• {a}</p>
-          ))}
+          <div className="space-y-2">
+            {actor.awards.map((a, i) => (
+              <div key={i} className="flex items-center justify-between rounded-md bg-panel p-2.5 text-sm">
+                <div>
+                  <p className="text-foreground font-medium">{a.name}</p>
+                  <p className="text-xs text-muted-foreground">{a.category} • {a.year}</p>
+                </div>
+                <Badge className={a.result === "Won"
+                  ? "bg-green-500/15 text-green-400 border-green-500/30 hover:bg-green-500/20"
+                  : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/20"
+                } variant="outline">
+                  {a.result}
+                </Badge>
+              </div>
+            ))}
+          </div>
         </div>
       )}
       <SQLQuerySection />
