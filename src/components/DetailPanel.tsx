@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import TrailerModal from "@/components/TrailerModal";
-import { movies, recommendedMovies, type Movie, type Actor, type Award } from "@/data/mockData";
+import type { Movie, Actor, Award } from "@/data/mockData";
 
 interface DetailPanelProps {
   type: "movie" | "actor" | "award";
@@ -29,7 +29,6 @@ export default function DetailPanel({ type, data, onClose }: DetailPanelProps) {
             <X className="h-5 w-5" />
           </Button>
         </div>
-
         <div className="p-4 space-y-6">
           {type === "movie" && <MovieDetail movie={data as Movie} onClose={onClose} />}
           {type === "actor" && <ActorDetail actor={data as Actor} />}
@@ -62,121 +61,95 @@ function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) 
     navigate(`/booking?movie=${encodeURIComponent(movie.title)}`);
   };
 
-  // Get similar movies based on shared genres - better matching with genre overlap scoring
-  const allMovies = [...movies, ...recommendedMovies];
-  const similarMovies = allMovies
-    .filter((m) => m.id !== movie.id)
-    .map((m) => ({
-      ...m,
-      genreOverlap: m.genre.filter((g) => movie.genre.includes(g)).length,
-    }))
-    .filter((m) => m.genreOverlap > 0)
-    .sort((a, b) => b.genreOverlap - a.genreOverlap || b.rating - a.rating)
-    .slice(0, 6);
-
   return (
     <>
-      <img src={movie.poster} alt={movie.title} className="w-full max-h-80 rounded-lg object-contain mx-auto" />
+      {movie.poster ? (
+        <img src={movie.poster} alt={movie.title} className="w-full max-h-80 rounded-lg object-contain mx-auto" />
+      ) : (
+        <div className="w-full max-h-80 h-48 rounded-lg bg-panel flex items-center justify-center">
+          <p className="text-sm text-muted-foreground">No poster available</p>
+        </div>
+      )}
+
       <div className="space-y-1">
         <p className="text-sm text-muted-foreground">Directed by {movie.director}</p>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{movie.duration}</span>
           <span className="flex items-center gap-1"><Globe className="h-3.5 w-3.5" />{movie.language}</span>
-          <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-primary text-primary" />{movie.rating}</span>
+          {movie.rating > 0 && (
+            <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-primary text-primary" />{movie.rating}</span>
+          )}
         </div>
       </div>
-      <div className="flex flex-wrap gap-2">
-        {movie.genre.map((g) => (
-          <Badge key={g} variant="secondary" className="bg-info/10 text-info border-info/20">{g}</Badge>
-        ))}
-      </div>
-      <div>
-        <h3 className="text-sm font-semibold text-foreground mb-1">Synopsis</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">{movie.synopsis}</p>
-      </div>
-      <div>
-        <h3 className="text-sm font-semibold text-foreground mb-2">Cast</h3>
-        <div className="space-y-1">
-          {movie.cast.map((c) => (
-            <div key={c.name} className="flex justify-between text-sm">
-              <span className="text-foreground">{c.name}</span>
-              <span className="text-muted-foreground">{c.role}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      {movie.awards.length > 0 && (
-        <div>
-          <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1">
-            <Trophy className="h-4 w-4 text-primary" /> Awards
-          </h3>
-          {movie.awards.map((a) => (
-            <p key={a} className="text-sm text-muted-foreground">• {a}</p>
+
+      {movie.genre.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {movie.genre.map((g) => (
+            <Badge key={g} variant="secondary" className="bg-info/10 text-info border-info/20">{g}</Badge>
           ))}
         </div>
       )}
-      <div className="flex gap-2 text-sm text-muted-foreground">
-        <span>Budget: {movie.budget}</span>
-        <span>•</span>
-        <span>Box Office: {movie.boxOffice}</span>
+
+      {movie.synopsis && (
+        <div>
+          <h3 className="text-sm font-semibold text-foreground mb-1">Synopsis</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">{movie.synopsis}</p>
+        </div>
+      )}
+
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-2">Cast</h3>
+        {movie.cast.length > 0 ? (
+          <div className="space-y-1">
+            {movie.cast.map((c) => (
+              <div key={c.name} className="flex justify-between text-sm">
+                <span className="text-foreground">{c.name}</span>
+                <span className="text-muted-foreground">{c.role}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No cast information available.</p>
+        )}
       </div>
 
-      {/* Action Buttons */}
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1">
+          <Trophy className="h-4 w-4 text-primary" /> Awards
+        </h3>
+        {movie.awards.length > 0 ? (
+          movie.awards.map((a) => (
+            <p key={a} className="text-sm text-muted-foreground">• {a}</p>
+          ))
+        ) : (
+          <p className="text-sm text-muted-foreground">No awards information available.</p>
+        )}
+      </div>
+
+      <div className="flex gap-2 text-sm text-muted-foreground">
+        {movie.budget !== "N/A" && <span>Budget: {movie.budget}</span>}
+        {movie.budget !== "N/A" && movie.boxOffice !== "N/A" && <span>•</span>}
+        {movie.boxOffice !== "N/A" && <span>Box Office: {movie.boxOffice}</span>}
+      </div>
+
       <div className="flex gap-2">
         <Button onClick={handleBookTickets} className="flex-1 gold-gradient text-primary-foreground font-semibold hover:opacity-90">
           <Ticket className="mr-2 h-4 w-4" /> Book Tickets
         </Button>
-        <Button
-          onClick={() => setShowTrailer(true)}
-          variant="outline"
-          className="flex-1 border-primary/30 text-primary hover:bg-primary/10 font-semibold"
-        >
-          <Play className="mr-2 h-4 w-4 fill-primary" /> Watch Trailer
-        </Button>
+        {movie.trailerUrl && (
+          <Button
+            onClick={() => setShowTrailer(true)}
+            variant="outline"
+            className="flex-1 border-primary/30 text-primary hover:bg-primary/10 font-semibold"
+          >
+            <Play className="mr-2 h-4 w-4 fill-primary" /> Watch Trailer
+          </Button>
+        )}
       </div>
-
-      {/* Recommended Similar Movies */}
-      {similarMovies.length > 0 && (
-        <div>
-          <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-1">
-            <Film className="h-4 w-4 text-primary" /> Recommended Similar Movies
-          </h3>
-          <div className="grid grid-cols-3 gap-2">
-            {similarMovies.map((m) => (
-              <SimilarMovieCard key={m.id} movie={m} onClose={onClose} />
-            ))}
-          </div>
-        </div>
-      )}
 
       <SQLQuerySection />
-
       {showTrailer && <TrailerModal movie={movie} onClose={() => setShowTrailer(false)} />}
     </>
-  );
-}
-
-function SimilarMovieCard({ movie, onClose }: { movie: Movie; onClose: () => void }) {
-  const navigate = useNavigate();
-  return (
-    <div
-      onClick={() => {
-        onClose();
-        navigate('/movies');
-      }}
-      className="group cursor-pointer rounded-md border border-border bg-panel overflow-hidden transition-all hover:border-primary/40 hover:shadow-md hover:shadow-primary/5 hover:-translate-y-0.5"
-    >
-      <div className="aspect-[2/3] overflow-hidden">
-        <img src={movie.poster} alt={movie.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-      </div>
-      <div className="p-1.5">
-        <p className="text-[11px] font-medium text-foreground truncate group-hover:text-primary transition-colors">{movie.title}</p>
-        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-          <Star className="h-2.5 w-2.5 fill-primary text-primary" />
-          <span>{movie.rating}</span>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -184,42 +157,55 @@ function ActorDetail({ actor }: { actor: Actor }) {
   return (
     <>
       <div className="flex items-center gap-4">
-        <img src={actor.photo} alt={actor.name} className="h-24 w-24 rounded-full object-cover object-top border-2 border-primary" />
+        {actor.photo ? (
+          <img src={actor.photo} alt={actor.name} className="h-24 w-24 rounded-full object-cover object-top border-2 border-primary" />
+        ) : (
+          <div className="h-24 w-24 rounded-full bg-panel border-2 border-border flex items-center justify-center">
+            <span className="text-xs text-muted-foreground">No photo</span>
+          </div>
+        )}
         <div>
           <Badge variant="secondary" className="mb-1 bg-accent/10 text-accent-foreground border-accent/20 text-xs">
             {actor.primaryRole}
           </Badge>
           <p className="text-sm text-muted-foreground">{actor.nationality} • {actor.gender}</p>
           <p className="text-sm text-muted-foreground">Age {actor.age}</p>
-          <Badge variant="secondary" className="mt-1 bg-primary/10 text-primary border-primary/20">
-            <Trophy className="mr-1 h-3 w-3" /> {actor.awardsCount} Awards
-          </Badge>
+          {actor.awardsCount > 0 && (
+            <Badge variant="secondary" className="mt-1 bg-primary/10 text-primary border-primary/20">
+              <Trophy className="mr-1 h-3 w-3" /> {actor.awardsCount} Awards
+            </Badge>
+          )}
         </div>
       </div>
 
-      {/* Info Grid */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
-          <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Place of Birth</p>
-            <p className="text-xs text-foreground font-medium">{actor.placeOfBirth}</p>
+        {actor.placeOfBirth && actor.placeOfBirth !== "N/A" && (
+          <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
+            <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Place of Birth</p>
+              <p className="text-xs text-foreground font-medium">{actor.placeOfBirth}</p>
+            </div>
           </div>
-        </div>
-        <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
-          <Ruler className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Height</p>
-            <p className="text-xs text-foreground font-medium">{actor.height}</p>
+        )}
+        {actor.height && actor.height !== "N/A" && (
+          <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
+            <Ruler className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Height</p>
+              <p className="text-xs text-foreground font-medium">{actor.height}</p>
+            </div>
           </div>
-        </div>
-        <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
-          <Calendar className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-          <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Active Years</p>
-            <p className="text-xs text-foreground font-medium">{actor.activeYears}</p>
+        )}
+        {actor.activeYears && actor.activeYears !== "N/A" && (
+          <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
+            <Calendar className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Active Years</p>
+              <p className="text-xs text-foreground font-medium">{actor.activeYears}</p>
+            </div>
           </div>
-        </div>
+        )}
         {actor.socialLinks.length > 0 && (
           <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
             <ExternalLink className="h-4 w-4 text-primary mt-0.5 shrink-0" />
@@ -237,37 +223,50 @@ function ActorDetail({ actor }: { actor: Actor }) {
         )}
       </div>
 
-      <div>
-        <h3 className="text-sm font-semibold text-foreground mb-1">Biography</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">{actor.biography}</p>
-      </div>
+      {actor.biography && (
+        <div>
+          <h3 className="text-sm font-semibold text-foreground mb-1">Biography</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">{actor.biography}</p>
+        </div>
+      )}
+
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-2">Known For</h3>
-        <div className="flex flex-wrap gap-2">
-          {actor.knownFor.map((m) => (
-            <Badge key={m} variant="secondary" className="bg-info/10 text-info border-info/20">{m}</Badge>
-          ))}
-        </div>
+        {actor.knownFor.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {actor.knownFor.map((m) => (
+              <Badge key={m} variant="secondary" className="bg-info/10 text-info border-info/20">{m}</Badge>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No information available.</p>
+        )}
       </div>
+
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-2">Filmography</h3>
-        <div className="space-y-2">
-          {actor.filmography.map((f) => (
-            <div key={f.title} className="flex items-center justify-between rounded-md bg-panel p-2 text-sm">
-              <div>
-                <span className="text-foreground font-medium">{f.title}</span>
-                <span className="ml-2 text-muted-foreground">({f.year})</span>
+        {actor.filmography.length > 0 ? (
+          <div className="space-y-2">
+            {actor.filmography.map((f) => (
+              <div key={f.title} className="flex items-center justify-between rounded-md bg-panel p-2 text-sm">
+                <div>
+                  <span className="text-foreground font-medium">{f.title}</span>
+                  <span className="ml-2 text-muted-foreground">({f.year})</span>
+                </div>
+                <span className="text-muted-foreground">{f.role}</span>
               </div>
-              <span className="text-muted-foreground">{f.role}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No filmography available.</p>
+        )}
       </div>
-      {actor.awards.length > 0 && (
-        <div>
-          <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1">
-            <Trophy className="h-4 w-4 text-primary" /> Awards
-          </h3>
+
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1">
+          <Trophy className="h-4 w-4 text-primary" /> Awards
+        </h3>
+        {actor.awards.length > 0 ? (
           <div className="space-y-2">
             {actor.awards.map((a, i) => (
               <div key={i} className="flex items-center justify-between rounded-md bg-panel p-2.5 text-sm">
@@ -275,17 +274,22 @@ function ActorDetail({ actor }: { actor: Actor }) {
                   <p className="text-foreground font-medium">{a.name}</p>
                   <p className="text-xs text-muted-foreground">{a.category} • {a.year}</p>
                 </div>
-                <Badge className={a.result === "Won"
-                  ? "bg-green-500/15 text-green-400 border-green-500/30 hover:bg-green-500/20"
-                  : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/20"
-                } variant="outline">
+                <Badge
+                  className={a.result === "Won"
+                    ? "bg-green-500/15 text-green-400 border-green-500/30 hover:bg-green-500/20"
+                    : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/20"}
+                  variant="outline"
+                >
                   {a.result}
                 </Badge>
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-sm text-muted-foreground">No awards information available.</p>
+        )}
+      </div>
+
       <SQLQuerySection />
     </>
   );
@@ -305,7 +309,9 @@ function AwardDetail({ award }: { award: Award }) {
         {award.won ? "Won" : "Nominated"}
       </Badge>
       <div className="flex items-center gap-3">
-        <img src={award.moviePoster} alt={award.movieTitle} className="h-20 w-14 rounded object-cover" />
+        {award.moviePoster && (
+          <img src={award.moviePoster} alt={award.movieTitle} className="h-20 w-14 rounded object-cover" />
+        )}
         <div>
           <p className="text-foreground font-semibold">{award.movieTitle}</p>
           <p className="text-sm text-muted-foreground flex items-center gap-1"><Film className="h-3.5 w-3.5" /> Associated Movie</p>
@@ -313,9 +319,13 @@ function AwardDetail({ award }: { award: Award }) {
       </div>
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-2">Other Nominees</h3>
-        {award.nominees.map((n) => (
-          <p key={n} className="text-sm text-muted-foreground">• {n}</p>
-        ))}
+        {award.nominees.length > 0 ? (
+          award.nominees.map((n) => (
+            <p key={n} className="text-sm text-muted-foreground">• {n}</p>
+          ))
+        ) : (
+          <p className="text-sm text-muted-foreground">No nominees information available.</p>
+        )}
       </div>
       <SQLQuerySection />
     </>
