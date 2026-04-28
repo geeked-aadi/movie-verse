@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { X, Star, Clock, Globe, Film, Trophy, Ticket, Database, Play, MapPin, Ruler, Calendar, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Star, Clock, Globe, Film, Trophy, Ticket, Play, MapPin, Ruler, Calendar, ExternalLink, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import TrailerModal from "@/components/TrailerModal";
 import type { Movie, Actor, Award } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
 
 interface DetailPanelProps {
   type: "movie" | "actor" | "award";
@@ -16,9 +17,9 @@ export default function DetailPanel({ type, data, onClose }: DetailPanelProps) {
   if (!data) return null;
 
   return (
-    <>
-      <div className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed right-0 top-16 bottom-0 z-50 w-full max-w-md overflow-y-auto border-l border-border bg-card animate-slide-in-right">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl border border-border bg-card shadow-2xl shadow-black/40">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-card p-4">
           <h2 className="text-lg font-bold text-primary">
             {type === "movie" && (data as Movie).title}
@@ -35,38 +36,102 @@ export default function DetailPanel({ type, data, onClose }: DetailPanelProps) {
           {type === "award" && <AwardDetail award={data as Award} />}
         </div>
       </div>
-    </>
-  );
-}
-
-function SQLQuerySection() {
-  return (
-    <div className="rounded-lg border border-border bg-panel p-4 space-y-3">
-      <h3 className="text-sm font-semibold text-primary flex items-center gap-2">
-        <Database className="h-4 w-4" /> SQL Query Execution
-      </h3>
-      <div className="min-h-[120px] rounded-md border border-dashed border-border bg-background/50 p-3 flex items-center justify-center">
-        <p className="text-xs text-muted-foreground text-center">SQL query results will be displayed here</p>
-      </div>
     </div>
   );
 }
 
+// ── SQL Display ──────────────────────────────────────────────────────────────
+function SQLQuerySection({ query }: { query: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="rounded-lg border border-border bg-panel p-4 space-y-2">
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className="flex items-center justify-between w-full text-sm font-semibold text-primary"
+      >
+        <span className="flex items-center gap-2">
+          <Globe className="h-4 w-4" /> Executed SQL Query
+        </span>
+        <span className="text-xs text-muted-foreground">{open ? "Hide ▲" : "Show ▼"}</span>
+      </button>
+      {open && (
+        <pre className="text-xs text-muted-foreground bg-background/60 rounded-md p-3 overflow-x-auto whitespace-pre-wrap break-all border border-border">
+          {query}
+        </pre>
+      )}
+    </div>
+  );
+}
+
+// ── Movie Detail ─────────────────────────────────────────────────────────────
+interface CastMember { name: string; role: string; photo: string; actor_id: string; }
+
 function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) {
   const navigate = useNavigate();
   const [showTrailer, setShowTrailer] = useState(false);
+  const [cast, setCast] = useState<CastMember[]>([]);
+  const [castLoading, setCastLoading] = useState(true);
+  const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
+
+  const castQuery = `SELECT
+  mc.role,
+  a.id AS actor_id,
+  a.name,
+  a.photo_url
+FROM movie_cast mc
+JOIN actors a ON a.id = mc.actor_id
+WHERE mc.movie_id = '${movie.id}';`;
+
+  const movieQuery = `SELECT
+  id, title, director, year, duration,
+  language, synopsis, budget_cr,
+  box_office_cr, poster_url, trailer_url, genres
+FROM movies
+WHERE id = '${movie.id}';`;
+
+  useEffect(() => {
+    async function fetchCast() {
+      setCastLoading(true);
+      const { data } = await supabase
+        .from("movie_cast")
+        .select(`role, actor_id, actors ( name, photo_url )`)
+        .eq("movie_id", movie.id as string);
+
+      if (data) {
+        setCast(data.map((row: any) => ({
+          actor_id: row.actor_id,
+          name: row.actors?.name ?? "Unknown",
+          photo: row.actors?.photo_url ?? "",
+          role: row.role ?? "N/A",
+        })));
+      }
+      setCastLoading(false);
+    }
+    fetchCast();
+  }, [movie.id]);
 
   const handleBookTickets = () => {
     onClose();
     navigate(`/booking?movie=${encodeURIComponent(movie.title)}`);
   };
 
+  // If an actor card is clicked inside movie detail, show actor popup
+  if (selectedActor) {
+    return (
+      <ActorDetail
+        actor={selectedActor}
+        onBack={() => setSelectedActor(null)}
+      />
+    );
+  }
+
   return (
     <>
       {movie.poster ? (
-        <img src={movie.poster} alt={movie.title} className="w-full max-h-80 rounded-lg object-contain mx-auto" />
+        <img src={movie.poster} alt={movie.title} className="w-full max-h-72 rounded-lg object-contain mx-auto" />
       ) : (
-        <div className="w-full max-h-80 h-48 rounded-lg bg-panel flex items-center justify-center">
+        <div className="w-full h-48 rounded-lg bg-panel flex items-center justify-center">
           <p className="text-sm text-muted-foreground">No poster available</p>
         </div>
       )}
@@ -97,14 +162,30 @@ function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) 
         </div>
       )}
 
+      {/* Cast */}
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-2">Cast</h3>
-        {movie.cast.length > 0 ? (
-          <div className="space-y-1">
-            {movie.cast.map((c) => (
-              <div key={c.name} className="flex justify-between text-sm">
-                <span className="text-foreground">{c.name}</span>
-                <span className="text-muted-foreground">{c.role}</span>
+        {castLoading ? (
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <Loader2 className="h-4 w-4 animate-spin" /> Loading cast…
+          </div>
+        ) : cast.length > 0 ? (
+          <div className="grid grid-cols-3 gap-2">
+            {cast.map((c) => (
+              <div
+                key={c.actor_id}
+                onClick={() => fetchAndSetActor(c.actor_id, setSelectedActor)}
+                className="group cursor-pointer flex flex-col items-center rounded-lg border border-border bg-panel p-2 hover:border-primary/40 transition-all"
+              >
+                {c.photo ? (
+                  <img src={c.photo} alt={c.name} className="h-14 w-14 rounded-full object-cover object-top border border-border group-hover:border-primary transition-colors" />
+                ) : (
+                  <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center">
+                    <span className="text-[10px] text-muted-foreground">No photo</span>
+                  </div>
+                )}
+                <p className="text-xs font-medium text-foreground text-center mt-1.5 group-hover:text-primary transition-colors truncate w-full text-center">{c.name}</p>
+                <p className="text-[10px] text-muted-foreground truncate w-full text-center">{c.role}</p>
               </div>
             ))}
           </div>
@@ -118,9 +199,7 @@ function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) 
           <Trophy className="h-4 w-4 text-primary" /> Awards
         </h3>
         {movie.awards.length > 0 ? (
-          movie.awards.map((a) => (
-            <p key={a} className="text-sm text-muted-foreground">• {a}</p>
-          ))
+          movie.awards.map((a) => <p key={a} className="text-sm text-muted-foreground">• {a}</p>)
         ) : (
           <p className="text-sm text-muted-foreground">No awards information available.</p>
         )}
@@ -137,25 +216,112 @@ function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) 
           <Ticket className="mr-2 h-4 w-4" /> Book Tickets
         </Button>
         {movie.trailerUrl && (
-          <Button
-            onClick={() => setShowTrailer(true)}
-            variant="outline"
-            className="flex-1 border-primary/30 text-primary hover:bg-primary/10 font-semibold"
-          >
+          <Button onClick={() => setShowTrailer(true)} variant="outline" className="flex-1 border-primary/30 text-primary hover:bg-primary/10 font-semibold">
             <Play className="mr-2 h-4 w-4 fill-primary" /> Watch Trailer
           </Button>
         )}
       </div>
 
-      <SQLQuerySection />
+      <SQLQuerySection query={movieQuery} />
+      <SQLQuerySection query={castQuery} />
+
       {showTrailer && <TrailerModal movie={movie} onClose={() => setShowTrailer(false)} />}
     </>
   );
 }
 
-function ActorDetail({ actor }: { actor: Actor }) {
+// ── Actor Detail ─────────────────────────────────────────────────────────────
+interface FilmographyEntry { title: string; year: number; role: string; movie_id: string; poster: string; }
+
+async function fetchAndSetActor(actorId: string, setActor: (a: Actor) => void) {
+  const { data } = await supabase
+    .from("actors")
+    .select(`*, social_links ( platform, url )`)
+    .eq("id", actorId)
+    .single();
+
+  if (data) {
+    const birthYear = data.date_of_birth ? new Date(data.date_of_birth).getFullYear() : null;
+    const age = birthYear ? new Date().getFullYear() - birthYear : 0;
+    setActor({
+      id: data.id,
+      name: data.name,
+      nationality: data.nationality ?? "N/A",
+      dob: data.date_of_birth ?? "",
+      age,
+      gender: data.gender ?? "N/A",
+      biography: data.biography ?? "",
+      photo: data.photo_url ?? "",
+      awardsCount: 0,
+      primaryRole: data.primary_role ?? "Actor",
+      placeOfBirth: data.place_of_birth ?? "N/A",
+      height: data.height_cm ? `${data.height_cm} cm` : "N/A",
+      activeYears: data.active_from ? `${data.active_from}–${data.active_to ?? "Present"}` : "N/A",
+      socialLinks: Array.isArray(data.social_links) ? data.social_links : [],
+      knownFor: [],
+      filmography: [],
+      awards: [],
+    });
+  }
+}
+
+function ActorDetail({ actor, onBack }: { actor: Actor; onBack?: () => void }) {
+  const [filmography, setFilmography] = useState<FilmographyEntry[]>([]);
+  const [filmoLoading, setFilmoLoading] = useState(true);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+
+  const actorQuery = `SELECT
+  a.*,
+  sl.platform,
+  sl.url
+FROM actors a
+LEFT JOIN social_links sl ON sl.actor_id = a.id
+WHERE a.id = '${actor.id}';`;
+
+  const filmographyQuery = `SELECT
+  mc.role,
+  m.id AS movie_id,
+  m.title,
+  m.year,
+  m.poster_url
+FROM movie_cast mc
+JOIN movies m ON m.id = mc.movie_id
+WHERE mc.actor_id = '${actor.id}';`;
+
+  useEffect(() => {
+    async function fetchFilmography() {
+      setFilmoLoading(true);
+      const { data } = await supabase
+        .from("movie_cast")
+        .select(`role, movie_id, movies ( title, year, poster_url )`)
+        .eq("actor_id", actor.id as string);
+
+      if (data) {
+        setFilmography(data.map((row: any) => ({
+          movie_id: row.movie_id,
+          title: row.movies?.title ?? "Unknown",
+          year: row.movies?.year ?? 0,
+          role: row.role ?? "N/A",
+          poster: row.movies?.poster_url ?? "",
+        })));
+      }
+      setFilmoLoading(false);
+    }
+    fetchFilmography();
+  }, [actor.id]);
+
+  if (selectedMovie) {
+    return <MovieDetail movie={selectedMovie} onClose={() => setSelectedMovie(null)} />;
+  }
+
   return (
     <>
+      {onBack && (
+        <button onClick={onBack} className="text-xs text-primary hover:underline mb-2 flex items-center gap-1">
+          ← Back to movie
+        </button>
+      )}
+
       <div className="flex items-center gap-4">
         {actor.photo ? (
           <img src={actor.photo} alt={actor.name} className="h-24 w-24 rounded-full object-cover object-top border-2 border-primary" />
@@ -165,9 +331,7 @@ function ActorDetail({ actor }: { actor: Actor }) {
           </div>
         )}
         <div>
-          <Badge variant="secondary" className="mb-1 bg-accent/10 text-accent-foreground border-accent/20 text-xs">
-            {actor.primaryRole}
-          </Badge>
+          <Badge variant="secondary" className="mb-1 bg-accent/10 text-accent-foreground border-accent/20 text-xs">{actor.primaryRole}</Badge>
           <p className="text-sm text-muted-foreground">{actor.nationality} • {actor.gender}</p>
           <p className="text-sm text-muted-foreground">Age {actor.age}</p>
           {actor.awardsCount > 0 && (
@@ -179,7 +343,7 @@ function ActorDetail({ actor }: { actor: Actor }) {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {actor.placeOfBirth && actor.placeOfBirth !== "N/A" && (
+        {actor.placeOfBirth !== "N/A" && (
           <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
             <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" />
             <div>
@@ -188,7 +352,7 @@ function ActorDetail({ actor }: { actor: Actor }) {
             </div>
           </div>
         )}
-        {actor.height && actor.height !== "N/A" && (
+        {actor.height !== "N/A" && (
           <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
             <Ruler className="h-4 w-4 text-primary mt-0.5 shrink-0" />
             <div>
@@ -197,7 +361,7 @@ function ActorDetail({ actor }: { actor: Actor }) {
             </div>
           </div>
         )}
-        {actor.activeYears && actor.activeYears !== "N/A" && (
+        {actor.activeYears !== "N/A" && (
           <div className="flex items-start gap-2 rounded-md bg-muted/30 p-2.5">
             <Calendar className="h-4 w-4 text-primary mt-0.5 shrink-0" />
             <div>
@@ -230,30 +394,35 @@ function ActorDetail({ actor }: { actor: Actor }) {
         </div>
       )}
 
-      <div>
-        <h3 className="text-sm font-semibold text-foreground mb-2">Known For</h3>
-        {actor.knownFor.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {actor.knownFor.map((m) => (
-              <Badge key={m} variant="secondary" className="bg-info/10 text-info border-info/20">{m}</Badge>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">No information available.</p>
-        )}
-      </div>
-
+      {/* Filmography */}
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-2">Filmography</h3>
-        {actor.filmography.length > 0 ? (
-          <div className="space-y-2">
-            {actor.filmography.map((f) => (
-              <div key={f.title} className="flex items-center justify-between rounded-md bg-panel p-2 text-sm">
-                <div>
-                  <span className="text-foreground font-medium">{f.title}</span>
-                  <span className="ml-2 text-muted-foreground">({f.year})</span>
+        {filmoLoading ? (
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <Loader2 className="h-4 w-4 animate-spin" /> Loading filmography…
+          </div>
+        ) : filmography.length > 0 ? (
+          <div className="grid grid-cols-3 gap-2">
+            {filmography.map((f) => (
+              <div
+                key={f.movie_id}
+                onClick={() => fetchAndSetMovie(f.movie_id, setSelectedMovie)}
+                className="group cursor-pointer rounded-lg border border-border bg-panel overflow-hidden hover:border-primary/40 transition-all"
+              >
+                <div className="aspect-[2/3] overflow-hidden">
+                  {f.poster ? (
+                    <img src={f.poster} alt={f.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  ) : (
+                    <div className="h-full w-full bg-muted flex items-center justify-center">
+                      <Film className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                  )}
                 </div>
-                <span className="text-muted-foreground">{f.role}</span>
+                <div className="p-1.5">
+                  <p className="text-[11px] font-medium text-foreground truncate group-hover:text-primary transition-colors">{f.title}</p>
+                  <p className="text-[10px] text-muted-foreground">{f.year}</p>
+                  <p className="text-[10px] text-muted-foreground truncate">{f.role}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -275,9 +444,9 @@ function ActorDetail({ actor }: { actor: Actor }) {
                   <p className="text-xs text-muted-foreground">{a.category} • {a.year}</p>
                 </div>
                 <Badge
-                  className={a.result === "Won"
-                    ? "bg-green-500/15 text-green-400 border-green-500/30 hover:bg-green-500/20"
-                    : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/20"}
+                  className={a.result === "won"
+                    ? "bg-green-500/15 text-green-400 border-green-500/30"
+                    : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30"}
                   variant="outline"
                 >
                   {a.result}
@@ -290,12 +459,65 @@ function ActorDetail({ actor }: { actor: Actor }) {
         )}
       </div>
 
-      <SQLQuerySection />
+      <SQLQuerySection query={actorQuery} />
+      <SQLQuerySection query={filmographyQuery} />
     </>
   );
 }
 
+// ── Helper to fetch a full movie by ID ───────────────────────────────────────
+async function fetchAndSetMovie(movieId: string, setMovie: (m: Movie) => void) {
+  const { data } = await supabase
+    .from("movies")
+    .select("*")
+    .eq("id", movieId)
+    .single();
+
+  if (data) {
+    setMovie({
+      id: data.id,
+      title: data.title,
+      year: data.year ?? 0,
+      genre: Array.isArray(data.genres) ? data.genres : [],
+      rating: data.rating ?? 0,
+      director: data.director ?? "Unknown",
+      duration: data.duration ?? "N/A",
+      language: data.language ?? "N/A",
+      synopsis: data.synopsis ?? "",
+      poster: data.poster_url ?? "",
+      heroImage: data.poster_url ?? "",
+      budget: data.budget_cr != null ? `₹${data.budget_cr} Cr` : "N/A",
+      boxOffice: data.box_office_cr != null ? `₹${data.box_office_cr} Cr` : "N/A",
+      cast: [],
+      awards: [],
+      trailerUrl: data.trailer_url ?? undefined,
+    });
+  }
+}
+
+// ── Award Detail ─────────────────────────────────────────────────────────────
 function AwardDetail({ award }: { award: Award }) {
+  const [linkedMovie, setLinkedMovie] = useState<Movie | null>(null);
+  const [linkedActor, setLinkedActor] = useState<Actor | null>(null);
+
+  const awardQuery = `SELECT
+  aw.*,
+  m.title AS movie_title,
+  m.poster_url AS movie_poster,
+  a.name AS actor_name,
+  a.photo_url AS actor_photo
+FROM awards aw
+LEFT JOIN movies m ON m.id = aw.movie_id
+LEFT JOIN actors a ON a.id = aw.actor_id
+WHERE aw.id = '${award.id}';`;
+
+  if (linkedMovie) {
+    return <MovieDetail movie={linkedMovie} onClose={() => setLinkedMovie(null)} />;
+  }
+  if (linkedActor) {
+    return <ActorDetail actor={linkedActor} onBack={() => setLinkedActor(null)} />;
+  }
+
   return (
     <>
       <div className="flex items-center gap-3">
@@ -305,29 +527,43 @@ function AwardDetail({ award }: { award: Award }) {
           <p className="text-sm text-muted-foreground">{award.body} • {award.year}</p>
         </div>
       </div>
+
       <Badge className={award.won ? "gold-gradient text-primary-foreground" : "bg-warning/10 text-warning border-warning/20"}>
         {award.won ? "Won" : "Nominated"}
       </Badge>
-      <div className="flex items-center gap-3">
-        {award.moviePoster && (
-          <img src={award.moviePoster} alt={award.movieTitle} className="h-20 w-14 rounded object-cover" />
-        )}
+
+      {/* Linked movie */}
+      {award.moviePoster || award.movieTitle !== "N/A" ? (
         <div>
-          <p className="text-foreground font-semibold">{award.movieTitle}</p>
-          <p className="text-sm text-muted-foreground flex items-center gap-1"><Film className="h-3.5 w-3.5" /> Associated Movie</p>
+          <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-1">
+            <Film className="h-4 w-4 text-primary" /> Associated Movie
+          </h3>
+          <div
+            onClick={() => fetchAndSetMovie(award.id as string, setLinkedMovie)}
+            className="group cursor-pointer flex items-center gap-3 rounded-lg border border-border bg-panel p-3 hover:border-primary/40 transition-all"
+          >
+            {award.moviePoster ? (
+              <img src={award.moviePoster} alt={award.movieTitle} className="h-16 w-11 rounded object-cover" />
+            ) : (
+              <div className="h-16 w-11 rounded bg-muted flex items-center justify-center">
+                <Film className="h-4 w-4 text-muted-foreground" />
+              </div>
+            )}
+            <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{award.movieTitle}</p>
+          </div>
         </div>
-      </div>
+      ) : null}
+
       <div>
         <h3 className="text-sm font-semibold text-foreground mb-2">Other Nominees</h3>
         {award.nominees.length > 0 ? (
-          award.nominees.map((n) => (
-            <p key={n} className="text-sm text-muted-foreground">• {n}</p>
-          ))
+          award.nominees.map((n) => <p key={n} className="text-sm text-muted-foreground">• {n}</p>)
         ) : (
           <p className="text-sm text-muted-foreground">No nominees information available.</p>
         )}
       </div>
-      <SQLQuerySection />
+
+      <SQLQuerySection query={awardQuery} />
     </>
   );
 }

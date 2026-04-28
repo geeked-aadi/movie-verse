@@ -85,7 +85,12 @@ export default function Update() {
         genres: selectedGenres.length > 0 ? selectedGenres : null,
       };
 
-      const { error } = await supabase.from("movies").insert(payload);
+      // After successful movie insert, you get back the new movie's id:
+      const { data: inserted, error } = await supabase
+      .from("movies")
+      .insert(payload)
+      .select("id")
+      .single();
       if (error) throw error;
 
       toast.success("Movie saved successfully!");

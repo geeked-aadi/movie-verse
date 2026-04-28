@@ -51,7 +51,7 @@ export interface Award {
   name: string;
   category: string;
   year: number;
-  body: string;
+  body: string;        // kept for DetailPanel compatibility, mapped from category
   movieTitle: string;
   moviePoster: string;
   won: boolean;

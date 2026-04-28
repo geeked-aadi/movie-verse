@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, Armchair, Ticket } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, Armchair, Ticket, Loader2 } from "lucide-react";
 import PiracyFooter from "@/components/PiracyFooter";
-import { movies, recommendedMovies } from "@/data/mockData";
+import type { Movie } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 const cities = ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad", "Jaipur", "Lucknow"];
@@ -15,6 +16,27 @@ const showtimes = ["10:00 AM", "1:15 PM", "4:30 PM", "7:45 PM", "10:30 PM"];
 const ROWS = 8;
 const COLS = 10;
 const rowLabels = "ABCDEFGH".split("");
+
+function rowToMovie(row: Record<string, unknown>): Movie {
+  return {
+    id: (row.id as string | number | undefined) ?? crypto.randomUUID(),
+    title: (row.title as string | undefined) ?? "Unknown",
+    year: (row.year as number | undefined) ?? 0,
+    genre: Array.isArray(row.genres) ? (row.genres as string[]) : [],
+    rating: (row.rating as number | undefined) ?? 0,
+    director: (row.director as string | undefined) ?? "Unknown",
+    duration: (row.duration as string | undefined) ?? "N/A",
+    language: (row.language as string | undefined) ?? "N/A",
+    synopsis: (row.synopsis as string | undefined) ?? "",
+    poster: (row.poster_url as string | undefined) ?? "",
+    heroImage: (row.poster_url as string | undefined) ?? "",
+    budget: row.budget_cr != null ? `₹${String(row.budget_cr)} Cr` : "N/A",
+    boxOffice: row.box_office_cr != null ? `₹${String(row.box_office_cr)} Cr` : "N/A",
+    cast: [],
+    awards: [],
+    trailerUrl: (row.trailer_url as string | undefined) ?? undefined,
+  };
+}
 
 function generateSeats() {
   const seats: string[][] = [];
@@ -32,7 +54,9 @@ export default function Booking() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const movieTitle = searchParams.get("movie") || "";
-  const allMovies = [...movies, ...recommendedMovies];
+  const [allMovies, setAllMovies] = useState<Movie[]>([]);
+  const [loadingMovie, setLoadingMovie] = useState(true);
+  const [movieError, setMovieError] = useState<string | null>(null);
   const movie = allMovies.find((m) => m.title === movieTitle);
 
   const [step, setStep] = useState(1);
@@ -58,6 +82,45 @@ export default function Booking() {
     });
     navigate("/movies");
   };
+
+  useEffect(() => {
+    async function fetchMovies() {
+      setLoadingMovie(true);
+      setMovieError(null);
+      try {
+        const { data, error } = await supabase
+          .from("movies")
+          .select("*");
+        if (error) throw error;
+        setAllMovies(data ? data.map((row) => rowToMovie(row as Record<string, unknown>)) : []);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        console.error("Failed to fetch movies for booking:", message);
+        setMovieError(message);
+      } finally {
+        setLoadingMovie(false);
+      }
+    }
+    fetchMovies();
+  }, []);
+
+  if (loadingMovie) {
+    return (
+      <div className="min-h-screen pt-16 flex flex-col items-center justify-center gap-2 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin" />
+        <p>Loading movie details…</p>
+      </div>
+    );
+  }
+
+  if (movieError) {
+    return (
+      <div className="min-h-screen pt-16 flex flex-col items-center justify-center">
+        <p className="text-sm text-destructive">Failed to load movies: {movieError}</p>
+        <Button variant="outline" onClick={() => navigate("/movies")} className="mt-4">Go Back</Button>
+      </div>
+    );
+  }
 
   if (!movie) {
     return (
