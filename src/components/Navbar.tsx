@@ -8,6 +8,7 @@ const navLinks = [
   { label: "Movies", path: "/movies" },
   { label: "Actors", path: "/actors" },
   { label: "Awards", path: "/awards" },
+  { label: "Social Wall", path: "/social" },
   { label: "Update", path: "/update" },
 ];
 
