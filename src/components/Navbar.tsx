@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Star, User } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 const navLinks = [
   { label: "Movies", path: "/movies" },
@@ -65,12 +64,6 @@ export default function Navbar({ onSearch }: NavbarProps) {
               className="h-9 w-56 border-border bg-panel pl-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
             />
           </form>
-          <Link to="/login">
-            <Button variant="outline" size="sm" className="gap-2 border-border text-muted-foreground hover:border-primary hover:text-primary">
-              <User className="h-4 w-4" />
-              <span className="hidden sm:inline">Sign In</span>
-            </Button>
-          </Link>
         </div>
       </div>
     </nav>
