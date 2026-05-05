@@ -19,6 +19,7 @@ interface MovieForm {
   director: string;
   year: string;
   duration: string;
+  rating: string;
   language: string;
   synopsis: string;
   budget_cr: string;
@@ -48,7 +49,7 @@ interface SelectedMovieActor {
 
 const defaultMovie: MovieForm = {
   title: "", director: "", year: "", duration: "",
-  language: "", synopsis: "", budget_cr: "", box_office_cr: "", poster_url: "",
+  rating: "", language: "", synopsis: "", budget_cr: "", box_office_cr: "", poster_url: "",
 };
 
 const defaultActor: ActorForm = {
@@ -125,6 +126,7 @@ export default function Update() {
         director: movieForm.director || null,
         year: movieForm.year ? parseInt(movieForm.year) : null,
         duration: movieForm.duration || null,
+        rating: movieForm.rating ? parseFloat(movieForm.rating) : null,
         language: movieForm.language || null,
         synopsis: movieForm.synopsis || null,
         budget_cr: movieForm.budget_cr ? parseFloat(movieForm.budget_cr) : null,
@@ -276,6 +278,19 @@ export default function Update() {
                 <div>
                   <Label className="text-foreground">Duration</Label>
                   <Input placeholder="e.g. 2h 15min" value={movieForm.duration} onChange={(e) => handleMovieChange("duration", e.target.value)} className="bg-panel border-border text-foreground" />
+                </div>
+                <div>
+                  <Label className="text-foreground">Rating</Label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="10"
+                    placeholder="e.g. 8.5"
+                    value={movieForm.rating}
+                    onChange={(e) => handleMovieChange("rating", e.target.value)}
+                    className="bg-panel border-border text-foreground"
+                  />
                 </div>
               </div>
 
