@@ -40,30 +40,6 @@ export default function DetailPanel({ type, data, onClose }: DetailPanelProps) {
   );
 }
 
-// ── SQL Display ──────────────────────────────────────────────────────────────
-function SQLQuerySection({ query }: { query: string }) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div className="rounded-lg border border-border bg-panel p-4 space-y-2">
-      <button
-        onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center justify-between w-full text-sm font-semibold text-primary"
-      >
-        <span className="flex items-center gap-2">
-          <Globe className="h-4 w-4" /> Executed SQL Query
-        </span>
-        <span className="text-xs text-muted-foreground">{open ? "Hide ▲" : "Show ▼"}</span>
-      </button>
-      {open && (
-        <pre className="text-xs text-muted-foreground bg-background/60 rounded-md p-3 overflow-x-auto whitespace-pre-wrap break-all border border-border">
-          {query}
-        </pre>
-      )}
-    </div>
-  );
-}
-
 // ── Movie Detail ─────────────────────────────────────────────────────────────
 interface CastMember { name: string; role: string; photo: string; actor_id: string; }
 
@@ -73,22 +49,6 @@ function MovieDetail({ movie, onClose }: { movie: Movie; onClose: () => void }) 
   const [cast, setCast] = useState<CastMember[]>([]);
   const [castLoading, setCastLoading] = useState(true);
   const [selectedActor, setSelectedActor] = useState<Actor | null>(null);
-
-  const castQuery = `SELECT
-  mc.role,
-  a.id AS actor_id,
-  a.name,
-  a.photo_url
-FROM movie_cast mc
-JOIN actors a ON a.id = mc.actor_id
-WHERE mc.movie_id = '${movie.id}';`;
-
-  const movieQuery = `SELECT
-  id, title, director, year, duration,
-  language, synopsis, budget_cr,
-  box_office_cr, poster_url, trailer_url, genres
-FROM movies
-WHERE id = '${movie.id}';`;
 
   useEffect(() => {
     async function fetchCast() {
@@ -222,9 +182,6 @@ WHERE id = '${movie.id}';`;
         )}
       </div>
 
-      <SQLQuerySection query={movieQuery} />
-      <SQLQuerySection query={castQuery} />
-
       {showTrailer && <TrailerModal movie={movie} onClose={() => setShowTrailer(false)} />}
     </>
   );
@@ -269,24 +226,6 @@ function ActorDetail({ actor, onBack }: { actor: Actor; onBack?: () => void }) {
   const [filmography, setFilmography] = useState<FilmographyEntry[]>([]);
   const [filmoLoading, setFilmoLoading] = useState(true);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-
-  const actorQuery = `SELECT
-  a.*,
-  sl.platform,
-  sl.url
-FROM actors a
-LEFT JOIN social_links sl ON sl.actor_id = a.id
-WHERE a.id = '${actor.id}';`;
-
-  const filmographyQuery = `SELECT
-  mc.role,
-  m.id AS movie_id,
-  m.title,
-  m.year,
-  m.poster_url
-FROM movie_cast mc
-JOIN movies m ON m.id = mc.movie_id
-WHERE mc.actor_id = '${actor.id}';`;
 
   useEffect(() => {
     async function fetchFilmography() {
@@ -459,8 +398,6 @@ WHERE mc.actor_id = '${actor.id}';`;
         )}
       </div>
 
-      <SQLQuerySection query={actorQuery} />
-      <SQLQuerySection query={filmographyQuery} />
     </>
   );
 }
@@ -499,17 +436,6 @@ async function fetchAndSetMovie(movieId: string, setMovie: (m: Movie) => void) {
 function AwardDetail({ award }: { award: Award }) {
   const [linkedMovie, setLinkedMovie] = useState<Movie | null>(null);
   const [linkedActor, setLinkedActor] = useState<Actor | null>(null);
-
-  const awardQuery = `SELECT
-  aw.*,
-  m.title AS movie_title,
-  m.poster_url AS movie_poster,
-  a.name AS actor_name,
-  a.photo_url AS actor_photo
-FROM awards aw
-LEFT JOIN movies m ON m.id = aw.movie_id
-LEFT JOIN actors a ON a.id = aw.actor_id
-WHERE aw.id = '${award.id}';`;
 
   if (linkedMovie) {
     return <MovieDetail movie={linkedMovie} onClose={() => setLinkedMovie(null)} />;
@@ -563,7 +489,6 @@ WHERE aw.id = '${award.id}';`;
         )}
       </div>
 
-      <SQLQuerySection query={awardQuery} />
     </>
   );
 }

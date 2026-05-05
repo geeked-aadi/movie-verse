@@ -302,7 +302,7 @@ function SelectSeats({
 
       {/* Seat grid */}
       <div className="overflow-x-auto pb-2">
-        <div className="inline-block min-w-full">
+        <div className="mx-auto w-max">
           {Object.entries(rows).map(([row, rowSeats]) => (
             <div key={row} className="flex items-center gap-1.5 mb-1.5">
               <span className="w-5 text-xs text-muted-foreground text-center shrink-0">{row}</span>
