@@ -1,5 +1,7 @@
 import { Star } from "lucide-react";
 
+const teamMembers = ["Aditya Aradhya", "Amrutesh", "Eshwari", "Brahmi"];
+
 export default function PiracyFooter() {
   return (
     <footer className="border-t border-border bg-card">
@@ -9,13 +11,14 @@ export default function PiracyFooter() {
             <Star className="h-4 w-4 fill-primary text-primary" />
             <span className="font-bold text-primary text-sm tracking-wide" style={{ fontFamily: "'Englebert', cursive" }}>MovieVerse</span>
           </div>
-          <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-primary transition-colors">About</a>
-            <a href="#" className="hover:text-primary transition-colors">Contact</a>
-            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms</a>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {teamMembers.map((member, index) => (
+              <span key={member} className="text-muted-foreground">
+                {index > 0 ? "• " : ""}
+                {member}
+              </span>
+            ))}
           </div>
-          <p>© 2026 MovieVerse. All rights reserved. Piracy is a crime.</p>
         </div>
       </div>
     </footer>

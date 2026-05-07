@@ -165,12 +165,34 @@ function SelectSeats({
     // Release expired holds first
     await supabase.rpc("release_expired_holds");
 
-    const { data } = await supabase
+    let { data, error } = await supabase
       .from("seats")
       .select("*")
       .eq("screening_id", screening.id)
       .order("row_label")
       .order("col_number");
+
+    // Backward-compatible fallback for schemas that still use `show_id`.
+    if (error?.message?.toLowerCase().includes("screening_id")) {
+      const fallback = await supabase
+        .from("seats")
+        .select("*")
+        .eq("show_id", screening.id)
+        .order("row_label")
+        .order("col_number");
+
+      data = fallback.data;
+      error = fallback.error;
+    }
+
+    if (error) {
+      console.error("Failed to load seats:", error);
+      toast.error("Could not load seats for this show.");
+      setSeats([]);
+      setLoading(false);
+      return;
+    }
+
     setSeats((data as Seat[]) ?? []);
     setLoading(false);
   }, [screening.id]);

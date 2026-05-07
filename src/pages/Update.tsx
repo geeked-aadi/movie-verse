@@ -31,9 +31,15 @@ interface ActorForm {
   name: string;
   nationality: string;
   date_of_birth: string;
+  place_of_birth: string;
   gender: string;
+  height_cm: string;
+  primary_role: string;
+  active_from: string;
+  active_to: string;
   biography: string;
   photo_url: string;
+  imdb_id: string;
 }
 
 interface ExistingActor {
@@ -53,7 +59,18 @@ const defaultMovie: MovieForm = {
 };
 
 const defaultActor: ActorForm = {
-  name: "", nationality: "", date_of_birth: "", gender: "", biography: "", photo_url: "",
+  name: "",
+  nationality: "",
+  date_of_birth: "",
+  place_of_birth: "",
+  gender: "",
+  height_cm: "",
+  primary_role: "",
+  active_from: "",
+  active_to: "",
+  biography: "",
+  photo_url: "",
+  imdb_id: "",
 };
 
 export default function Update() {
@@ -120,6 +137,10 @@ export default function Update() {
       return;
     }
     setSavingMovie(true);
+
+    // Snapshot state at call time to avoid closure issues
+    const actorsSnapshot = [...selectedMovieActors];
+
     try {
       const payload = {
         title: movieForm.title.trim(),
@@ -135,17 +156,18 @@ export default function Update() {
         genres: selectedGenres.length > 0 ? selectedGenres : null,
       };
 
-      // After successful movie insert, you get back the new movie's id:
-      const { data: inserted, error } = await supabase
-      .from("movies")
-      .insert(payload)
-      .select("id")
-      .single();
-      if (error) throw error;
+      const { data: inserted, error: movieError } = await supabase
+        .from("movies")
+        .insert(payload)
+        .select("id")
+        .single();
 
-      if (selectedMovieActors.length > 0) {
-        // Safety guard: keep only one entry per actor before inserting cast rows.
-        const uniqueActors = selectedMovieActors.filter(
+      if (movieError) throw movieError;
+      if (!inserted?.id) throw new Error("Movie was saved but no ID was returned.");
+
+      if (actorsSnapshot.length > 0) {
+        // Deduplicate: keep only the first entry per actor_id
+        const uniqueActors = actorsSnapshot.filter(
           (item, index, arr) => arr.findIndex((a) => a.actor_id === item.actor_id) === index
         );
 
@@ -159,12 +181,12 @@ export default function Update() {
           .from("movie_cast")
           .insert(castPayload);
 
-        if (castError) throw castError;
+        if (castError) throw new Error(`Movie saved, but cast insert failed: ${castError.message}`);
       }
 
       toast.success(
-        selectedMovieActors.length > 0
-          ? `Movie saved with ${selectedMovieActors.length} actor(s)!`
+        actorsSnapshot.length > 0
+          ? `Movie saved with ${actorsSnapshot.length} actor(s)!`
           : "Movie saved successfully!"
       );
       setMovieForm(defaultMovie);
@@ -187,13 +209,22 @@ export default function Update() {
     }
     setSavingActor(true);
     try {
+      const parsedHeight = actorForm.height_cm.trim() ? parseInt(actorForm.height_cm, 10) : null;
+      const parsedActiveFrom = actorForm.active_from.trim() ? parseInt(actorForm.active_from, 10) : null;
+      const parsedActiveTo = actorForm.active_to.trim() ? parseInt(actorForm.active_to, 10) : null;
       const payload = {
         name: actorForm.name.trim(),
-        nationality: actorForm.nationality || null,
+        nationality: actorForm.nationality.trim() || null,
         date_of_birth: actorForm.date_of_birth || null,
+        place_of_birth: actorForm.place_of_birth.trim() || null,
         gender: actorForm.gender || null,
-        biography: actorForm.biography || null,
-        photo_url: actorForm.photo_url || null,
+        height_cm: Number.isNaN(parsedHeight) ? null : parsedHeight,
+        primary_role: actorForm.primary_role.trim() || null,
+        active_from: Number.isNaN(parsedActiveFrom) ? null : parsedActiveFrom,
+        active_to: Number.isNaN(parsedActiveTo) ? null : parsedActiveTo,
+        biography: actorForm.biography.trim() || null,
+        photo_url: actorForm.photo_url.trim() || null,
+        imdb_id: actorForm.imdb_id.trim() || null,
       };
 
       const { error } = await supabase.from("actors").insert(payload);
@@ -449,6 +480,13 @@ export default function Update() {
                   <Input type="date" value={actorForm.date_of_birth} onChange={(e) => handleActorChange("date_of_birth", e.target.value)} className="bg-panel border-border text-foreground" />
                 </div>
                 <div>
+                  <Label className="text-foreground">Place of Birth</Label>
+                  <Input value={actorForm.place_of_birth} onChange={(e) => handleActorChange("place_of_birth", e.target.value)} className="bg-panel border-border text-foreground" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
                   <Label className="text-foreground">Gender</Label>
                   <Select value={actorForm.gender} onValueChange={(v) => handleActorChange("gender", v)}>
                     <SelectTrigger className="bg-panel border-border text-foreground"><SelectValue placeholder="Select gender" /></SelectTrigger>
@@ -458,6 +496,25 @@ export default function Update() {
                       <SelectItem value="Other">Other</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div>
+                  <Label className="text-foreground">Primary Role</Label>
+                  <Input placeholder="e.g. Actor, Actress, Voice Artist" value={actorForm.primary_role} onChange={(e) => handleActorChange("primary_role", e.target.value)} className="bg-panel border-border text-foreground" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-foreground">Height (cm)</Label>
+                  <Input type="number" value={actorForm.height_cm} onChange={(e) => handleActorChange("height_cm", e.target.value)} className="bg-panel border-border text-foreground" />
+                </div>
+                <div>
+                  <Label className="text-foreground">Active From</Label>
+                  <Input type="number" placeholder="e.g. 2001" value={actorForm.active_from} onChange={(e) => handleActorChange("active_from", e.target.value)} className="bg-panel border-border text-foreground" />
+                </div>
+                <div>
+                  <Label className="text-foreground">Active To</Label>
+                  <Input type="number" placeholder="e.g. 2024" value={actorForm.active_to} onChange={(e) => handleActorChange("active_to", e.target.value)} className="bg-panel border-border text-foreground" />
                 </div>
               </div>
 
@@ -469,6 +526,11 @@ export default function Update() {
               <div>
                 <Label className="text-foreground">Photo URL</Label>
                 <Input placeholder="https://..." value={actorForm.photo_url} onChange={(e) => handleActorChange("photo_url", e.target.value)} className="bg-panel border-border text-foreground" />
+              </div>
+
+              <div>
+                <Label className="text-foreground">IMDb ID</Label>
+                <Input placeholder="e.g. nm0000138" value={actorForm.imdb_id} onChange={(e) => handleActorChange("imdb_id", e.target.value)} className="bg-panel border-border text-foreground" />
               </div>
 
               <div className="flex gap-3 pt-2">
