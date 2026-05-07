@@ -157,6 +157,7 @@ function SelectSeats({
 }) {
   const [seats, setSeats] = useState<Seat[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
+  const [bookedSeatOwners, setBookedSeatOwners] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [holding, setHolding] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -193,7 +194,27 @@ function SelectSeats({
       return;
     }
 
-    setSeats((data as Seat[]) ?? []);
+    const loadedSeats = (data as Seat[]) ?? [];
+    setSeats(loadedSeats);
+
+    const { data: bookingsData } = await supabase
+      .from("bookings")
+      .select("seat_ids, user_name")
+      .eq("screening_id", screening.id)
+      .eq("status", "confirmed");
+
+    const ownerBySeat: Record<string, string> = {};
+    (bookingsData ?? []).forEach((booking: any) => {
+      const bookerName = typeof booking.user_name === "string" ? booking.user_name.trim() : "";
+      if (!bookerName) return;
+      if (!Array.isArray(booking.seat_ids)) return;
+
+      booking.seat_ids.forEach((seatId: unknown) => {
+        if (seatId == null) return;
+        ownerBySeat[String(seatId)] = bookerName;
+      });
+    });
+    setBookedSeatOwners(ownerBySeat);
     setLoading(false);
   }, [screening.id]);
 
@@ -292,6 +313,17 @@ function SelectSeats({
     return "bg-panel border-border hover:border-primary/60 cursor-pointer";
   };
 
+  const getSeatTitle = (seat: Seat) => {
+    const seatLabel = `${seat.row_label}${seat.col_number}`;
+    if (seat.status === "booked") {
+      const bookedBy = bookedSeatOwners[seat.id];
+      return bookedBy
+        ? `${seatLabel} — ${seat.seat_type} — booked by ${bookedBy}`
+        : `${seatLabel} — ${seat.seat_type} — booked`;
+    }
+    return `${seatLabel} — ${seat.seat_type} — ${seat.status}`;
+  };
+
   if (loading) return (
     <div className="flex items-center justify-center py-24 gap-2 text-muted-foreground">
       <Loader2 className="h-5 w-5 animate-spin" /><span>Loading seats...</span>
@@ -335,7 +367,7 @@ function SelectSeats({
                     onClick={() => toggleSeat(seat)}
                     disabled={seat.status === "booked" || (seat.status === "held" && seat.held_by !== SESSION_ID)}
                     className={`h-8 w-8 rounded-md border text-[10px] font-medium transition-all ${getSeatStyle(seat)}`}
-                    title={`${seat.row_label}${seat.col_number} — ${seat.seat_type} — ${seat.status}`}
+                    title={getSeatTitle(seat)}
                   >
                     {seat.col_number}
                   </button>
