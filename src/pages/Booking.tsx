@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Loader2, Clock, X, Check, ChevronRight, Film, Calendar, Monitor } from "lucide-react";
+import { Loader2, Clock, X, Check, ChevronRight, Film, Calendar, Monitor, MapPin, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,18 @@ import PiracyFooter from "@/components/PiracyFooter";
 import { supabase } from "@/lib/supabase";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
+/** Joined from `theaters` or derived from optional columns on `screenings`. */
+interface TheaterInfo {
+  name: string;
+  location?: string | null;
+}
+
+interface TheaterRow {
+  id: string;
+  name: string;
+  location: string | null;
+}
+
 interface Screening {
   id: string;
   movie_id: string;
@@ -17,7 +29,13 @@ interface Screening {
   show_time: string;
   price_regular: number;
   price_premium: number;
+  /** FK to `theaters` — used to filter shows by venue */
+  theater_id?: string | null;
   movies: { title: string; poster_url: string };
+  theaters?: TheaterInfo | TheaterInfo[] | null;
+  /** Denormalized fallback when no `theaters` row is joined */
+  theater_name?: string | null;
+  location?: string | null;
 }
 
 interface Seat {
@@ -30,7 +48,9 @@ interface Seat {
   held_until: string | null;
 }
 
-type Step = "select-screening" | "select-seats" | "checkout" | "confirmed";
+type Step = "select-theater" | "select-screening" | "select-seats" | "checkout" | "confirmed";
+
+type TheaterGate = "loading" | "theater" | "no-theater";
 
 // ── Session ID (persisted per browser tab) ────────────────────────────────────
 function getSessionId(): string {
@@ -56,41 +76,153 @@ function formatDate(d: string) {
   return new Date(d).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 }
 
+function getTheater(screening: Screening): TheaterInfo | null {
+  const raw = screening.theaters;
+  const fromJoin = Array.isArray(raw) ? raw[0] : raw;
+  const name =
+    (fromJoin?.name && String(fromJoin.name).trim()) ||
+    (screening.theater_name && String(screening.theater_name).trim()) ||
+    "";
+  const location =
+    (fromJoin?.location != null && String(fromJoin.location).trim()) ||
+    (screening.location != null && String(screening.location).trim()) ||
+    "";
+  if (!name && !location) return null;
+  return { name: name || "Theater", location: location || null };
+}
+
+function TheaterLocationLines({ screening, className = "" }: { screening: Screening; className?: string }) {
+  const t = getTheater(screening);
+  if (!t) return null;
+  return (
+    <div className={`space-y-0.5 ${className}`}>
+      {t.name ? (
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Building2 className="h-3 w-3 shrink-0 opacity-70" />
+          <span className="truncate">{t.name}</span>
+        </p>
+      ) : null}
+      {t.location ? (
+        <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+          <MapPin className="h-3 w-3 shrink-0 mt-0.5 opacity-70" />
+          <span className="leading-snug">{t.location}</span>
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+// ── Step 0: Select Theater (when `theaters` has rows) ─────────────────────────
+function SelectTheater({
+  theaters,
+  onSelect,
+}: {
+  theaters: TheaterRow[];
+  onSelect: (t: TheaterRow) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">Choose a cinema to see available shows.</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {theaters.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => onSelect(t)}
+            className="flex flex-col items-start rounded-xl border border-border bg-card p-4 text-left transition-all hover:border-primary hover:bg-primary/5"
+          >
+            <span className="flex items-center gap-2 font-semibold text-foreground">
+              <Building2 className="h-4 w-4 shrink-0 text-primary" />
+              {t.name}
+            </span>
+            {t.location ? (
+              <span className="mt-2 flex items-start gap-2 text-xs text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5 opacity-80" />
+                {t.location}
+              </span>
+            ) : (
+              <span className="mt-2 text-xs text-muted-foreground">Location not set</span>
+            )}
+            <span className="mt-3 flex items-center gap-1 text-xs font-medium text-primary">
+              Select <ChevronRight className="h-3 w-3" />
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Step 1: Select Screening ──────────────────────────────────────────────────
 function SelectScreening({
   movieTitle,
+  theaterId,
+  selectedTheater,
+  onChangeTheater,
   onSelect,
 }: {
   movieTitle?: string;
+  /** When set, only shows for this venue */
+  theaterId?: string;
+  selectedTheater?: TheaterRow | null;
+  onChangeTheater?: () => void;
   onSelect: (s: Screening) => void;
 }) {
   const [screenings, setScreenings] = useState<Screening[]>([]);
   const [loading, setLoading] = useState(true);
 
- // REPLACE the entire fetch function inside SelectScreening
-useEffect(() => {
-  async function fetch() {
-    const { data } = await supabase
-      .from("screenings")
-      .select("*, movies(title, poster_url)")
-      .gte("show_date", new Date().toISOString().split("T")[0])
-      .order("show_date")
-      .order("show_time");
+  useEffect(() => {
+    async function fetchScreenings() {
+      const from = new Date().toISOString().split("T")[0];
+      const withTheater = "*, movies(title, poster_url), theaters(name, location)";
+      const baseOnly = "*, movies(title, poster_url)";
 
-    // Filter out any rows where the movie join returned null
-    // then optionally filter by movieTitle on the client side
-    const valid = ((data as any[]) ?? []).filter((s) => s.movies !== null);
-    const filtered = movieTitle
-      ? valid.filter((s) =>
-          s.movies.title.toLowerCase().includes(movieTitle.toLowerCase())
-        )
-      : valid;
+      const runQuery = async (select: string) => {
+        let q = supabase
+          .from("screenings")
+          .select(select)
+          .gte("show_date", from)
+          .order("show_date")
+          .order("show_time");
+        if (theaterId) {
+          q = q.eq("theater_id", theaterId);
+        }
+        return q;
+      };
 
-    setScreenings(filtered);
-    setLoading(false);
-  }
-  fetch();
-}, [movieTitle]);
+      let res = await runQuery(withTheater);
+
+      if (res.error) {
+        res = await runQuery(baseOnly);
+      }
+
+      const rows = (res.data as any[]) ?? [];
+      const valid = rows
+        .filter((s) => s.movies !== null)
+        .map((s) => {
+          if (!s.theaters && (s.theater_name != null || s.location != null)) {
+            return {
+              ...s,
+              theaters: {
+                name: s.theater_name ?? "",
+                location: s.location ?? null,
+              },
+            };
+          }
+          return s;
+        });
+
+      const filtered = movieTitle
+        ? valid.filter((s) =>
+            s.movies.title.toLowerCase().includes(movieTitle.toLowerCase())
+          )
+        : valid;
+
+      setScreenings(filtered as Screening[]);
+      setLoading(false);
+    }
+    fetchScreenings();
+  }, [movieTitle, theaterId]);
   if (loading) return (
     <div className="flex items-center justify-center py-24 gap-2 text-muted-foreground">
       <Loader2 className="h-5 w-5 animate-spin" /><span>Loading shows...</span>
@@ -107,6 +239,23 @@ useEffect(() => {
 
   return (
     <div className="space-y-8">
+      {selectedTheater && onChangeTheater && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-4">
+          <div className="min-w-0">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Venue</p>
+            <p className="font-semibold text-foreground">{selectedTheater.name}</p>
+            {selectedTheater.location ? (
+              <p className="text-xs text-muted-foreground mt-0.5 flex items-start gap-1.5">
+                <MapPin className="h-3 w-3 shrink-0 mt-0.5" />
+                {selectedTheater.location}
+              </p>
+            ) : null}
+          </div>
+          <Button type="button" variant="outline" size="sm" className="shrink-0 border-border" onClick={onChangeTheater}>
+            Change venue
+          </Button>
+        </div>
+      )}
       {Object.entries(byMovie).map(([title, shows]) => (
         <div key={title} className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="flex items-center gap-4 p-4 border-b border-border">
@@ -119,22 +268,31 @@ useEffect(() => {
             </div>
           </div>
           <div className="p-4 flex flex-wrap gap-3">
-            {shows.map((s) => (
+            {shows.map((s) => {
+              const theater = getTheater(s);
+              return (
               <button
                 key={s.id}
                 onClick={() => onSelect(s)}
-                className="flex flex-col items-center rounded-lg border border-border bg-panel px-5 py-3 hover:border-primary hover:bg-primary/5 transition-all group"
+                className="flex flex-col items-center rounded-lg border border-border bg-panel px-5 py-3 hover:border-primary hover:bg-primary/5 transition-all group max-w-[200px]"
               >
                 <span className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                   {formatTime(s.show_time)}
                 </span>
+                {theater && !theaterId && (
+                  <span className="text-[10px] text-muted-foreground mt-1 text-center line-clamp-2 leading-tight">
+                    {theater.name}
+                    {theater.location ? ` · ${theater.location}` : ""}
+                  </span>
+                )}
                 <span className="text-[10px] text-muted-foreground mt-0.5">Screen {s.screen_number}</span>
                 <div className="flex gap-1.5 mt-1.5">
                   <Badge variant="outline" className="text-[9px] px-1 py-0 border-green-500/40 text-green-400">₹{s.price_regular}</Badge>
                   <Badge variant="outline" className="text-[9px] px-1 py-0 border-primary/40 text-primary">₹{s.price_premium}</Badge>
                 </div>
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
       ))}
@@ -332,6 +490,11 @@ function SelectSeats({
 
   return (
     <div className="space-y-6">
+      {getTheater(screening) && (
+        <div className="rounded-lg border border-border bg-panel/80 px-3 py-2">
+          <TheaterLocationLines screening={screening} />
+        </div>
+      )}
       {/* Screen indicator */}
       <div className="text-center space-y-2">
         <div className="mx-auto w-3/4 h-2 rounded-full bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
@@ -552,6 +715,7 @@ function Checkout({
             <p className="text-sm font-medium text-foreground">{screening.movies.title}</p>
             <p className="text-xs text-muted-foreground">{formatDate(screening.show_date)} • {formatTime(screening.show_time)}</p>
             <p className="text-xs text-muted-foreground">Screen {screening.screen_number}</p>
+            <TheaterLocationLines screening={screening} className="mt-2" />
           </div>
         </div>
         <div className="border-t border-border pt-3 space-y-1.5">
@@ -640,6 +804,7 @@ function Confirmed({
             <p className="font-semibold text-foreground">{screening.movies.title}</p>
             <p className="text-xs text-muted-foreground">{formatDate(screening.show_date)}</p>
             <p className="text-xs text-muted-foreground">{formatTime(screening.show_time)} • Screen {screening.screen_number}</p>
+            <TheaterLocationLines screening={screening} className="mt-2" />
           </div>
         </div>
         <div className="border-t border-border pt-3">
@@ -671,20 +836,74 @@ export default function Booking() {
   const [searchParams] = useSearchParams();
   const movieTitle = searchParams.get("movie") ?? undefined;
 
+  const [gate, setGate] = useState<TheaterGate>("loading");
+  const [theatersList, setTheatersList] = useState<TheaterRow[]>([]);
+  const [selectedTheater, setSelectedTheater] = useState<TheaterRow | null>(null);
+
   const [step, setStep] = useState<Step>("select-screening");
   const [screening, setScreening] = useState<Screening | null>(null);
   const [heldSeats, setHeldSeats] = useState<Seat[]>([]);
   const [bookingId, setBookingId] = useState<string>("");
   const [confirmedName, setConfirmedName] = useState<string>("");
 
-  const stepLabels: { key: Step; label: string; icon: React.ReactNode }[] = [
-    { key: "select-screening", label: "Show", icon: <Film className="h-3.5 w-3.5" /> },
-    { key: "select-seats", label: "Seats", icon: <Monitor className="h-3.5 w-3.5" /> },
-    { key: "checkout", label: "Checkout", icon: <Calendar className="h-3.5 w-3.5" /> },
-    { key: "confirmed", label: "Confirmed", icon: <Check className="h-3.5 w-3.5" /> },
-  ];
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("theaters")
+        .select("id, name, location")
+        .order("name", { ascending: true });
+
+      if (cancelled) return;
+
+      if (error || !data?.length) {
+        setGate("no-theater");
+        setStep("select-screening");
+        return;
+      }
+
+      setTheatersList(data as TheaterRow[]);
+      setGate("theater");
+      setStep("select-theater");
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const stepLabels = useMemo(() => {
+    if (gate === "theater") {
+      return [
+        { key: "select-theater" as const, label: "Venue", icon: <Building2 className="h-3.5 w-3.5" /> },
+        { key: "select-screening" as const, label: "Show", icon: <Film className="h-3.5 w-3.5" /> },
+        { key: "select-seats" as const, label: "Seats", icon: <Monitor className="h-3.5 w-3.5" /> },
+        { key: "checkout" as const, label: "Checkout", icon: <Calendar className="h-3.5 w-3.5" /> },
+        { key: "confirmed" as const, label: "Confirmed", icon: <Check className="h-3.5 w-3.5" /> },
+      ];
+    }
+    return [
+      { key: "select-screening" as const, label: "Show", icon: <Film className="h-3.5 w-3.5" /> },
+      { key: "select-seats" as const, label: "Seats", icon: <Monitor className="h-3.5 w-3.5" /> },
+      { key: "checkout" as const, label: "Checkout", icon: <Calendar className="h-3.5 w-3.5" /> },
+      { key: "confirmed" as const, label: "Confirmed", icon: <Check className="h-3.5 w-3.5" /> },
+    ];
+  }, [gate]);
 
   const stepIndex = stepLabels.findIndex((s) => s.key === step);
+  const stepperItems = stepLabels.filter((s) => s.key !== "confirmed");
+
+  if (gate === "loading") {
+    return (
+      <div className="min-h-screen pt-16 flex flex-col">
+        <div className="mx-auto max-w-4xl px-4 py-8 flex-1 w-full flex items-center justify-center gap-2 text-muted-foreground">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading…</span>
+        </div>
+        <PiracyFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-16 flex flex-col">
@@ -699,7 +918,7 @@ export default function Booking() {
         {/* Stepper */}
         {step !== "confirmed" && (
           <div className="flex items-center mb-8">
-            {stepLabels.filter((s) => s.key !== "confirmed").map((s, i) => (
+            {stepperItems.map((s, i) => (
               <div key={s.key} className="flex items-center flex-1 last:flex-none">
                 <div className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors
                   ${stepIndex >= i
@@ -708,7 +927,7 @@ export default function Booking() {
                   }`}>
                   {s.icon}{s.label}
                 </div>
-                {i < 2 && (
+                {i < stepperItems.length - 1 && (
                   <div className={`flex-1 h-px mx-2 ${stepIndex > i ? "bg-primary/40" : "bg-border"}`} />
                 )}
               </div>
@@ -717,7 +936,7 @@ export default function Booking() {
         )}
 
         {/* Screening info bar */}
-        {screening && step !== "select-screening" && step !== "confirmed" && (
+        {screening && step !== "select-screening" && step !== "select-theater" && step !== "confirmed" && (
           <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 mb-6 text-sm">
             {screening.movies.poster_url && (
               <img src={screening.movies.poster_url} alt={screening.movies.title} className="h-10 w-7 rounded object-cover shrink-0" />
@@ -725,6 +944,7 @@ export default function Booking() {
             <div className="flex-1 min-w-0">
               <p className="font-medium text-foreground truncate">{screening.movies.title}</p>
               <p className="text-xs text-muted-foreground">{formatDate(screening.show_date)} • {formatTime(screening.show_time)} • Screen {screening.screen_number}</p>
+              <TheaterLocationLines screening={screening} className="mt-1.5" />
             </div>
             {step === "select-seats" && (
               <button onClick={() => setStep("select-screening")} className="text-xs text-primary hover:underline shrink-0">Change</button>
@@ -733,17 +953,44 @@ export default function Booking() {
         )}
 
         {/* Steps */}
+        {step === "select-theater" && gate === "theater" && (
+          <SelectTheater
+            theaters={theatersList}
+            onSelect={(t) => {
+              setSelectedTheater(t);
+              setStep("select-screening");
+            }}
+          />
+        )}
+
         {step === "select-screening" && (
           <SelectScreening
             movieTitle={movieTitle}
-            onSelect={(s) => { setScreening(s); setStep("select-seats"); }}
+            theaterId={selectedTheater?.id}
+            selectedTheater={gate === "theater" ? selectedTheater : null}
+            onChangeTheater={
+              gate === "theater"
+                ? () => {
+                    setSelectedTheater(null);
+                    setScreening(null);
+                    setStep("select-theater");
+                  }
+                : undefined
+            }
+            onSelect={(s) => {
+              setScreening(s);
+              setStep("select-seats");
+            }}
           />
         )}
 
         {step === "select-seats" && screening && (
           <SelectSeats
             screening={screening}
-            onConfirm={(seats) => { setHeldSeats(seats); setStep("checkout"); }}
+            onConfirm={(seats) => {
+              setHeldSeats(seats);
+              setStep("checkout");
+            }}
             onBack={() => setStep("select-screening")}
           />
         )}
