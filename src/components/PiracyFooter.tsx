@@ -4,7 +4,7 @@ const teamMembers = [ "Amrutesh", "Eshwari", "Brahmi","Aditya Aradhya"];
 
 export default function PiracyFooter() {
   return (
-    <footer className="border-t border-border bg-card">
+    <footer className="border-t border-border bg-background/95 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 py-3">
         <div className="grid grid-cols-[auto_1fr_auto] items-center text-xs text-muted-foreground">
           <div className="flex items-center gap-2">

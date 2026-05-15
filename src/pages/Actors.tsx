@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Trophy, MapPin, Calendar, Search, Loader2 } from "lucide-react";
+import { MapPin, Calendar, Search, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import DetailPanel from "@/components/DetailPanel";
@@ -119,9 +119,6 @@ export default function Actors() {
                         <span className="text-xs text-muted-foreground">No photo</span>
                       </div>
                     )}
-                    <Badge className="absolute -bottom-1 left-1/2 -translate-x-1/2 gold-gradient text-primary-foreground text-[10px] px-1.5 py-0">
-                      <Trophy className="mr-0.5 h-2.5 w-2.5" /> {actor.awardsCount}
-                    </Badge>
                   </div>
                   <h3 className="text-sm font-semibold text-foreground text-center group-hover:text-primary transition-colors">
                     {actor.name}
