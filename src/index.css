@@ -6,56 +6,56 @@
 
 @layer base {
   :root {
-    --background: 0 0% 7.1%;
-    --foreground: 0 0% 94.1%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 12.2%;
-    --card-foreground: 0 0% 94.1%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 12.2%;
-    --popover-foreground: 0 0% 94.1%;
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 45 91% 52.5%;
-    --primary-foreground: 0 0% 7.1%;
+    --primary: 47 92% 53%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 0 0% 16.5%;
-    --secondary-foreground: 0 0% 94.1%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 20%;
-    --muted-foreground: 0 0% 60.4%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 0 0% 16.5%;
-    --accent-foreground: 0 0% 94.1%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 90% 47.1%;
-    --destructive-foreground: 0 0% 94.1%;
+    --destructive-foreground: 0 0% 100%;
 
     --success: 157 69% 37%;
-    --success-foreground: 0 0% 94.1%;
+    --success-foreground: 0 0% 100%;
 
-    --warning: 36 78% 41%;
-    --warning-foreground: 0 0% 94.1%;
+    --warning: 47 92% 53%;
+    --warning-foreground: 0 0% 0%;
 
-    --info: 210 65% 54%;
-    --info-foreground: 0 0% 94.1%;
+    --info: 214 83% 64%;
+    --info-foreground: 0 0% 100%;
 
     --border: 0 0% 20%;
-    --input: 0 0% 16.5%;
-    --ring: 45 91% 52.5%;
+    --input: 0 0% 15%;
+    --ring: 47 92% 53%;
 
     --radius: 0.5rem;
 
-    --surface: 0 0% 12.2%;
-    --panel: 0 0% 16.5%;
+    --surface: 0 0% 11%;
+    --panel: 0 0% 15%;
 
-    --sidebar-background: 0 0% 12.2%;
-    --sidebar-foreground: 0 0% 94.1%;
-    --sidebar-primary: 45 91% 52.5%;
-    --sidebar-primary-foreground: 0 0% 7.1%;
-    --sidebar-accent: 0 0% 16.5%;
-    --sidebar-accent-foreground: 0 0% 94.1%;
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 47 92% 53%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 45 91% 52.5%;
+    --sidebar-ring: 47 92% 53%;
   }
 }
 
@@ -75,7 +75,7 @@
 
 @layer utilities {
   .gold-gradient {
-    background: linear-gradient(135deg, hsl(45 91% 52.5%), hsl(36 78% 41%));
+    background: linear-gradient(135deg, hsl(47 92% 53%), hsl(42 90% 45%));
   }
 
   .glass-surface {

@@ -23,3 +23,13 @@ dist-ssr
 *.sln
 *.sw?
 .env.local
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Vite cache / TS incremental
+.vite
+*.tsbuildinfo
