@@ -5,7 +5,7 @@ import PixelSnow from "@/components/PixelSnow";
 export default function Index() {
   return (
     <div className="min-h-screen pt-16 flex flex-col">
-      <section className="relative flex-1 flex items-center">
+      <section className="relative flex-1 flex items-center justify-center">
         {/* PixelSnow Background */}
         <div className="absolute inset-0 z-0">
           <PixelSnow 
@@ -21,13 +21,13 @@ export default function Index() {
         </div>
         
         {/* Content */}
-        <div className="mx-auto max-w-7xl px-4 py-20 w-full relative z-10 pointer-events-none">
-          <div className="space-y-6 max-w-3xl pointer-events-auto">
-            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-primary leading-tight">
+        <div className="mx-auto max-w-7xl px-4 w-full relative z-10 pointer-events-none flex justify-center">
+          <div className="space-y-6 max-w-3xl pointer-events-auto flex flex-col items-center text-center">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-primary leading-tight drop-shadow-md">
               Movie Recommendation System
             </h1>
-            <p className="text-base text-muted-foreground max-w-lg leading-relaxed">
-              Discover, explore, and book your favorite movies. Browse through our curated collection of films across genres, languages, and eras. Your ultimate movie companion.
+            <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed drop-shadow-md">
+              Your gateway to the ultimate cinematic experience. Discover, explore, and book tickets for the latest blockbusters and timeless classics.
             </p>
             <Link
               to="/movies"
